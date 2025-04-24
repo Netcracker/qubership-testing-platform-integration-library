@@ -1,0 +1,47 @@
+/*
+ * # Copyright 2024-2025 NetCracker Technology Corporation
+ * #
+ * # Licensed under the Apache License, Version 2.0 (the "License");
+ * # you may not use this file except in compliance with the License.
+ * # You may obtain a copy of the License at
+ * #
+ * #      http://www.apache.org/licenses/LICENSE-2.0
+ * #
+ * # Unless required by applicable law or agreed to in writing, software
+ * # distributed under the License is distributed on an "AS IS" BASIS,
+ * # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * # See the License for the specific language governing permissions and
+ * # limitations under the License.
+ */
+
+package org.qubership.atp.integration.configuration.configuration;
+
+import java.util.UUID;
+
+import org.qubership.atp.integration.configuration.feign.MailSenderFeignClient;
+import org.qubership.atp.integration.configuration.model.MailRequest;
+import org.qubership.atp.integration.configuration.service.MailSenderService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.kafka.core.KafkaTemplate;
+
+@Configuration
+@Import({KafkaMailSenderConfiguration.class, MultipartSupportConfiguration.class})
+public class MailSenderConfiguration {
+
+    @Bean
+    @ConditionalOnProperty(name = "kafka.mails.enable", havingValue = "false", matchIfMissing = true)
+    public MailSenderService mailSenderService(MailSenderFeignClient mailSenderFeignClient) {
+        return new MailSenderService(null, mailSenderFeignClient);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "kafka.mails.enable", havingValue = "true")
+    public MailSenderService mailSenderServiceWithKafka(KafkaTemplate<UUID, MailRequest> kafkaTemplate,
+                                               MailSenderFeignClient mailSenderFeignClient) {
+        return new MailSenderService(kafkaTemplate, mailSenderFeignClient);
+    }
+
+}

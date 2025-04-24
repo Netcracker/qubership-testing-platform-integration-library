@@ -1,0 +1,10 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.qubership.atp.integration.configuration.configuration.AtpIntegrationConfiguration,\
+  org.qubership.atp.integration.configuration.configuration.AtpIntegrationCommonKafkaConfiguration, \
+  org.qubership.atp.integration.configuration.configuration.HttpInterceptorConfiguration, \
+  org.qubership.atp.integration.configuration.configuration.AuditLoggingConfiguration, \
+  org.qubership.atp.integration.configuration.configuration.MailSenderConfiguration, \
+  org.qubership.atp.integration.configuration.configuration.LoggingHelpersConfiguration, \
+  org.qubership.atp.integration.configuration.configuration.MdcInterceptorsHelperConfiguration, \
+  org.qubership.atp.integration.configuration.configuration.AtpWebMetricsConfiguration
+

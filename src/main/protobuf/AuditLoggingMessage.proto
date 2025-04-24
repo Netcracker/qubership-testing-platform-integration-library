@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_outer_classname = "KafkaAuditLoggingMessage";
+option java_package = "org.qubership.atp.integration.configuration.protos";
+
+message AuditLoggingMessage {
+  string id = 1;
+  string sessionId = 2;
+  string projectId = 3;
+  string service = 4;
+  string username = 5;
+  string userId = 6;
+  string url = 7;
+  int64 startDate = 8;
+  string httpMethod = 9;
+  string referPage = 10;
+  string ipAddress = 11;
+  string userAgent = 12;
+  string userAction = 13;
+  int32 httpStatusCode = 14;
+}
