@@ -1,15 +1,16 @@
-# atp-integration-spring-boot-starter # 
+# atp-integration-spring-boot-starter
 
-### Purpose ###
+### Purpose
 
 The library is for integration of ATP2 with Registry service, Public gateway service and Internal Gateway service.
 
-### How to add ###
+### How to add
 
-#### How to add into SpringBoot application #####
-##### 1. Add dependency: #####
+#### How to add into SpringBoot application
 
-```    
+##### 1. Add dependency:
+
+```
 <dependency>
     <groupId>org.qubership.atp</groupId>
     <artifactId>atp-integration-spring-boot-starter</artifactId>
@@ -17,55 +18,72 @@ The library is for integration of ATP2 with Registry service, Public gateway ser
 </dependency>
 ```
 
-##### 2. Add annotation into Main class #####
+##### 2. Add annotation into Main class
+
 ```
 @EnableDiscoveryClient
 ```
 
-##### 3. Add properties into application.properties #####
+##### 3. Add properties into application.properties
 
 - Service name:
+
 ```
 spring.application.name=atp-service-name
 ```
+
 - Set 'atp.service.public' property to true in order to register the service in the public gateway
+
 ```
 atp.service.public=true
 ```
+
 - Set 'atp.service.internal' property to true in order to register the service in the internal gateway
+
 ```
 atp.service.internal=true
 ```
+
 - URL of registry service:
+
 ```
 eureka.client.serviceUrl.defaultZone= http://atp-registry-service:8761/eureka/
 ```
+
 - Path-to-service (If empty or absent, default path will be registered: 'api/service-name/v1')
+
 ```
 atp.service.path=/api/atp-service-name/v1/**
 ```
-- To start the service without registering in the registry, one should set: 
+
+- To start the service without registering in the registry, one should set:
+
 ```
 eureka.client.enabled=false
 ```
+
 ```
 eureka.instance.preferIpAddress=true
 ```
 
 # FeignClient and RestController Logging
+
 ## 1. Add properties into application.properties
+
 ```
 atp.logging.controller.headers=${ATP_HTTP_LOGGING_HEADERS:true}
 atp.logging.controller.headers.ignore=${ATP_HTTP_LOGGING_HEADERS_IGNORE:}
 atp.logging.controller.uri.ignore=${ATP_HTTP_LOGGING_URI_IGNORE:/deployment/readiness /deployment/liveness}
 ```
-* By default, 'atp.logging.controller.headers' and 'atp.logging.feignclient.headers' are false.
-* _atp.logging.controller.headers_ - To log request/response headers for RestController. 
-* _atp.logging.controller.headers.ignore_ - To ignore specified headers while logging for RestController. Tokens should be separated with spaces.
-* _atp.logging.controller.uri.ignore_ - To ignore specified endpoints while logging.
-* Properties _atp.logging.controller.headers.ignore_ and _atp.logging.controller.uri.ignore_ support regular expressions.
+
+- By default, 'atp.logging.controller.headers' and 'atp.logging.feignclient.headers' are false.
+- _atp.logging.controller.headers_ - To log request/response headers for RestController.
+- _atp.logging.controller.headers.ignore_ - To ignore specified headers while logging for RestController. Tokens should be separated with spaces.
+- _atp.logging.controller.uri.ignore_ - To ignore specified endpoints while logging.
+- Properties _atp.logging.controller.headers.ignore_ and _atp.logging.controller.uri.ignore_ support regular expressions.
 
 ## 2. Add configuration into logback.xml
+
 ```
     <if condition='${ATP_HTTP_LOGGING}'>
         <then>
@@ -77,13 +95,15 @@ atp.logging.controller.uri.ignore=${ATP_HTTP_LOGGING_URI_IGNORE:/deployment/read
 ```
 
 To turn logging ON at local machine, one should add options into JVM parameters:
+
 ```
 -Dlogging.level.org.qubership.atp.common.logging.filter.LoggingFilter=debug
 ```
 
 ## 3. The configuration to use Notification client
 
-##### Add annotation into Main.class #####
+##### Add annotation into Main.class
+
 ```
 @EnableAtpNotification
 ```
@@ -107,6 +127,7 @@ feign.atp.notification.route=${FEIGN_ATP_NOTIFICATION_ROUTE:/api/atp-notificatio
 ```
 
 ## 4. Configuration for using the mail sender
+
 ```properties
 ## Enable sending mails via Kafka
 kafka.mails.enable=${KAFKA_ENABLE:false}
@@ -137,7 +158,7 @@ To get the results of sending an email through Kafka, you need to add a KafkaLis
 ```java
 @KafkaListener(topic = "${kafka.mails.responses.topic}", groupId = "${kafka.mails.responses.group.id}")
 public void consume(KafkaMailResponse mailResponse) {
-    // This topic gets the results of sending emails from all services, 
+    // This topic gets the results of sending emails from all services,
     // so you need to add filtering by service name to separate your requests from other services
     if (yourServiceName.equals(mailResponse.getService())) {
         // Do whatever you want to do with response
@@ -147,33 +168,41 @@ public void consume(KafkaMailResponse mailResponse) {
         } else {
             log.error("Sending an email failed with an error: {}", response.getMessage());
         }
-    }    
+    }
 }
 ```
 
 # Audit Logging
+
 ## 1. Add properties into application.properties
+
 Mandatory properties:
+
 ```
 spring.kafka.producer.bootstrap-servers=...
 atp.audit.logging.enable=true/false
 atp.audit.logging.topic.name=...
 ```
+
 Optional properties:
+
 ```
 atp.audit.logging.topic.partitions=1
 atp.audit.logging.topic.replicas=3
 ```
 
 ## Logging business ids
+
 Default list of business ids:
+
 ```
 userId,projectId,executionRequestId,testRunId,bvTestRunId,bvTestCaseId,environmentId,
 systemId,subscriberId,tsgSessionId,svpSessionId,dataSetId,dataSetListId,attributeId,
 itfLiteRequestId,reportType,itfSessionId,itfContextId,callChainId
 ```
+
 Property to set business ids:
+
 ```
 atp.logging.business.keys=userId,projectId
 ```
-
