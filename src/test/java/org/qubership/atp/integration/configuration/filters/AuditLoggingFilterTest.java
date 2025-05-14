@@ -21,7 +21,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -67,6 +70,9 @@ public class AuditLoggingFilterTest {
     @MockBean
     private FilterChain filterChain;
 
+    /**
+     * Valid Bearer Token for Authorisation Header value.
+     */
     public static final String TEST_AUTH_HEADER = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5TWVzOD" +
             "NZai05clhfZUItYWZuUWdPRzhDZUFhblFTakJZTS0wNjQxdVdVIn0.eyJqdGkiOiI1OTRmMzY0My1hODhmLTQ3MTQtYTM2NS1jYWJiZj" +
             "Y1MmY5MWYiLCJleHAiOjE2NjIzNzk3NzIsIm5iZiI6MCwiaWF0IjoxNjYyMzc2MTcyLCJpc3MiOiJodHRwczovL2F0cC1rZXljbG9hay" +
@@ -82,6 +88,9 @@ public class AuditLoggingFilterTest {
             "0ROuCYMo3EcJpFzZA2dt2GQEpj29N4Qk6a-dx3IG6Jz0T0LqEN1bjsd3EeiRXqm83wsYi3nkmPx4Yz538Op4QfS2UxDUriUQNaU9vXyo" +
             "FRNawE09X6C56Y3gTqytG2JDUZhKYcoY87sbERRVtJFVLrJxiGiGvrest92ATNrEVz2tI13y4SbiuaQAx0BOT5T4Iz9gAm_FkKg";
 
+    /**
+     * Valid Bearer Token for Authorisation Header value, especially for M2M.
+     */
     public static final String TEST_M2M_HEADER = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5TWVzODN" +
             "Zai05clhfZUItYWZuUWdPRzhDZUFhblFTakJZTS0wNjQxdVdVIn0.eyJqdGkiOiI2ZTRhMzkyOC1lNmU4LTQxMWYtYWNmZC01NDI5YjM" +
             "0MzA2NzkiLCJleHAiOjE2NjI2MjU1NjMsIm5iZiI6MCwiaWF0IjoxNjYyNjIxOTYzLCJpc3MiOiJodHRwczovL2F0cC1rZXljbG9hay1" +
@@ -101,6 +110,9 @@ public class AuditLoggingFilterTest {
             "gdmQKowUIK2fPEwPzEBnQSsxXmmsTXhUtFIz_szi8M2VT2XEZY5DiUXqmVaczZR6nPu6Zc1DCGtqv5NqtQ7cF9GCIhlODpxkDs655Q3J" +
             "X8rHkFrZfYFiVdoVQHZMqpaA";
 
+    /**
+     * Invalid Bearer Token for Authorisation Header value.
+     */
     public static final String BROKEN_BEARER_HEADER = "Bearer eyJhbGciOiJSUz I1NiIsInR5cCIgOiAiS ldUIiwia2lkIiA6ICI5TWVzOD" +
             "NZai05clhfZUItYWZuUWdPRzhDZUFhblFTakJZTS0wNjQxdVdVIn0.eyJqdGkiOiI1OTRmMzY0My1hODhmLTQ3MTQtYTM2NS1jYWJiZj" +
             "Y1MmY5MWYiLCJleHAiOjE2NjIzNzk3NzIsIm5iZiI6MCwiaWF0IjoxNjYyMzc2MTcyLCJpc3MiOiJodHRwczovL2F0cC1rZXljbG9hay" +
@@ -116,83 +128,93 @@ public class AuditLoggingFilterTest {
             "0ROuCYMo3EcJpFzZA2dt2GQEpj29N4Qk6a-dx3IG6Jz0T0LqEN1bjsd3EeiRXqm83wsYi3nkmPx4Yz538Op4QfS2UxDUriUQNaU9vXyo" +
             "FRNawE09X6C56Y3gTqytG2JDUZhKYcoY87sbERRVtJFVLrJxiGiGvrest92ATNrEVz2tI13y4SbiuaQAx0BOT5T4Iz9gAm_FkKg";
 
+    /**
+     * Basic Authorisation Header value.
+     */
     public static final String TEST_BASIC_HEADER = "Basic 123";
 
+    /**
+     * URL to some of the project resources.
+     */
     private static final String TEST_URL = "/catalog/api/v1/projects/ea2be7c4-b9f2-4d63-a4b1-5d94075fcc9f/testplans";
+
+    /**
+     * Project UUID.
+     */
     private static final String TEST_PROJECT_ID = "ea2be7c4-b9f2-4d63-a4b1-5d94075fcc9f";
 
+    /**
+     * Before test handler.
+     */
     @Before
     public void setUp() {
         when(httpServletRequest.getHeader(PROJECT_ID_HEADER_NAME)).thenReturn(TEST_PROJECT_ID);
         when(httpServletRequest.getRequestURI()).thenReturn(TEST_URL);
     }
 
+    /**
+     * Test audit logging in case Bearer Token is set.
+     *
+     * @throws Exception pass ServletException or IOException from inner function.
+     */
     @Test
     public void userAuthHeaderSet_doFilterInternal_expectAuditLoggingCall() throws Exception {
-        // given
-        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(TEST_AUTH_HEADER);
-
-        // when
-        auditLoggingFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
-
-        // then
-        verify(filterChain, times(1)).doFilter(httpServletRequest, httpServletResponse);
-        verify(auditLoggingService, times(1))
-                .loggingRequest(httpServletRequest, httpServletResponse);
+        whenThenVerifyParametrizedInternal(TEST_AUTH_HEADER, 1, 1);
     }
 
+    /**
+     * Test audit logging skipping in case M2M Authorisation Header is set.
+     *
+     * @throws Exception pass ServletException or IOException from inner function.
+     */
     @Test
     public void m2mAuthHeaderSet_doFilterInternal_expectAuditLoggingSkip() throws Exception {
-        // given
-        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(TEST_M2M_HEADER);
-
-        // when
-        auditLoggingFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
-
-        // then
-        verify(filterChain, times(1)).doFilter(httpServletRequest, httpServletResponse);
-        verify(auditLoggingService, times(0))
-                .loggingRequest(httpServletRequest, httpServletResponse);
+        whenThenVerifyParametrizedInternal(TEST_M2M_HEADER, 1, 0);
     }
 
+    /**
+     * Test audit logging in case Authorisation Header is not set.
+     *
+     * @throws Exception pass ServletException or IOException from inner function.
+     */
     @Test
     public void authHeaderNotSet_doFilterInternal_expectAuditLoggingSkip() throws Exception {
-        // given
-        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(StringUtils.EMPTY);
-
-        // when
-        auditLoggingFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
-
-        // then
-        verify(filterChain, times(1)).doFilter(httpServletRequest, httpServletResponse);
-        verify(auditLoggingService, times(0))
-                .loggingRequest(httpServletRequest, httpServletResponse);
+        whenThenVerifyParametrizedInternal(StringUtils.EMPTY, 1, 0);
     }
 
+    /**
+     * Test audit logging in case Basic Token is set.
+     *
+     * @throws Exception pass ServletException or IOException from inner function.
+     */
     @Test
     public void authHeaderSet_BasicToken_doFilterInternal_expectAuditLoggingCall() throws Exception {
-        // given
-        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(TEST_BASIC_HEADER);
-
-        // when
-        auditLoggingFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
-
-        // then
-        verify(filterChain, times(1)).doFilter(httpServletRequest, httpServletResponse);
-        verify(auditLoggingService, times(1)).loggingRequest(httpServletRequest, httpServletResponse);
+        whenThenVerifyParametrizedInternal(TEST_BASIC_HEADER, 1, 1);
     }
 
+    /**
+     * Test audit logging in case Bearer Token is set but ParseException is faced.
+     *
+     * @throws Exception pass ServletException or IOException from inner function.
+     */
     @Test
     public void authHeaderSet_BearerTokenParseException_doFilterInternal_expectAuditLoggingCall() throws Exception {
-        // given
-        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(BROKEN_BEARER_HEADER);
+        whenThenVerifyParametrizedInternal(BROKEN_BEARER_HEADER, 1, 1);
+    }
 
+    private void whenThenVerifyParametrizedInternal(final String authHeaderValue,
+                                                    final int filterNumberOfInvocations,
+                                                    final int requestNumberOfInvocations)
+            throws ServletException, IOException {
+        // given
+        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(authHeaderValue);
         // when
         auditLoggingFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
-
         // then
-        verify(filterChain, times(1)).doFilter(httpServletRequest, httpServletResponse);
-        verify(auditLoggingService, times(1)).loggingRequest(httpServletRequest, httpServletResponse);
+        verify(filterChain, times(filterNumberOfInvocations))
+                .doFilter(httpServletRequest, httpServletResponse);
+        verify(auditLoggingService, times(requestNumberOfInvocations))
+                .loggingRequest(httpServletRequest, httpServletResponse);
     }
 
 }

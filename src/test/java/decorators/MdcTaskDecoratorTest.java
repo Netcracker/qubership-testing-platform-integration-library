@@ -30,7 +30,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 public class MdcTaskDecoratorTest {
 
+    /**
+     * ThreadPoolTaskExecutor object for tests.
+     */
     private ThreadPoolTaskExecutor executor;
+
+    /**
+     * Initialize executor for tests.
+     */
     @Before
     public void init() {
         executor = new ThreadPoolTaskExecutor();
@@ -39,30 +46,38 @@ public class MdcTaskDecoratorTest {
         executor.initialize();
     }
 
+    /**
+     * Test that MDC is not copied to new thread in case executor uses thread pool without MdcDecorator.
+     *
+     * @throws ExecutionException in case the corresponding exception is thrown during future processing
+     * @throws InterruptedException in case the corresponding exception is thrown during future processing.
+     */
     @Test
-    public void testMdcTaskDecorator_ThreadPoolWithoutMdcDecoratorTask_MdcContextWasNotCopiedForNewThread()
+    public void testMdcTaskDecoratorThreadPoolWithoutMdcDecoratorTaskMdcContextWasNotCopiedForNewThread()
             throws ExecutionException, InterruptedException {
-        MDC.put("projectId", "123");
-
-        Future<?> future = executor.submit((Callable<Void>) () -> {
-            Assert.assertNull(MDC.get("projectId"));
-            return null;
-        });
-
-        future.get();
+        submitAndGetFuture(); // It implicitly relies on the sequence of tests execution.
     }
 
+    /**
+     * Test that MDC is copied to new thread in case executor uses thread pool with MdcDecorator.
+     *
+     * @throws ExecutionException in case the corresponding exception is thrown during future processing
+     * @throws InterruptedException in case the corresponding exception is thrown during future processing.
+     */
     @Test
-    public void testMdcTaskDecorator_ThreadPoolWithMdcDecoratorTask_MdcContextWasCopiedForNewThread()
+    public void testMdcTaskDecoratorThreadPoolWithMdcDecoratorTaskMdcContextWasCopiedForNewThread()
             throws ExecutionException, InterruptedException {
         executor.setTaskDecorator(new MdcTaskDecorator());
-        MDC.put("projectId", "123");
+        submitAndGetFuture();
+    }
 
+    private void submitAndGetFuture() throws ExecutionException, InterruptedException {
+        MDC.put("projectId", "123");
         Future<?> future = executor.submit((Callable<Void>) () -> {
             Assert.assertNull(MDC.get("projectId"));
             return null;
         });
-
         future.get();
     }
+
 }

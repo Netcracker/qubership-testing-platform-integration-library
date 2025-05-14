@@ -40,7 +40,7 @@ public class AtpIntegrationCommonKafkaConfiguration {
     /**
      * Configure kafka admin.
      *
-     * @return configured kafka admin,
+     * @return configured kafka admin.
      */
     @Bean
     @Lazy
@@ -51,8 +51,14 @@ public class AtpIntegrationCommonKafkaConfiguration {
         return new KafkaAdmin(configs);
     }
 
+    /**
+     * Configure kafka admin helper.
+     *
+     * @param kafkaAdmin object
+     * @return configured kafka admin helper.
+     */
     @Bean
-    public KafkaAdminHelper kafkaAdminHelper(KafkaAdmin kafkaAdmin) {
+    public KafkaAdminHelper kafkaAdminHelper(final KafkaAdmin kafkaAdmin) {
         return new KafkaAdminHelper(kafkaAdmin);
     }
 }

@@ -31,12 +31,12 @@ import org.springframework.context.annotation.Configuration;
 public class AtpWebMetricsConfiguration {
     private final MetricsProperties properties;
 
-    public AtpWebMetricsConfiguration(MetricsProperties properties) {
+    public AtpWebMetricsConfiguration(final MetricsProperties properties) {
         this.properties = properties;
     }
 
     @Bean
-    public CustomWebMvcTagsProvider webMvcTagsProvider(ObjectProvider<WebMvcTagsContributor> contributors) {
+    public CustomWebMvcTagsProvider webMvcTagsProvider(final ObjectProvider<WebMvcTagsContributor> contributors) {
         return new CustomWebMvcTagsProvider(this.properties.getWeb().getServer().getRequest().isIgnoreTrailingSlash(),
                 contributors.orderedStream().collect(Collectors.toList()));
     }

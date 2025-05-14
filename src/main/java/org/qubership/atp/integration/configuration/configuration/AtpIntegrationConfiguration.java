@@ -29,18 +29,35 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class AtpIntegrationConfiguration {
 
+    /**
+     * Get Route Service.
+     *
+     * @return new RouteService object.
+     */
     @Bean
     public RouteService getRouteService() {
         return new RouteService();
     }
 
+    /**
+     * Get RouteRegisterComponent for routeService provided.
+     *
+     * @param routeService RouteService object
+     * @return new RouteRegisterComponent for routeService parameter.
+     */
     @Bean
-    public RouteRegisterComponent getRouteRegisterComponent(RouteService routeService) {
+    public RouteRegisterComponent getRouteRegisterComponent(final RouteService routeService) {
         return new RouteRegisterComponent(routeService);
     }
 
+    /**
+     * Get RouteInfoController for routeService provided.
+     *
+     * @param routeService RouteService object
+     * @return new RouteInfoController for routeService parameter.
+     */
     @Bean
-    public RouteInfoController routeInfoController(RouteService routeService) {
+    public RouteInfoController routeInfoController(final RouteService routeService) {
         return new RouteInfoController(routeService);
     }
 }

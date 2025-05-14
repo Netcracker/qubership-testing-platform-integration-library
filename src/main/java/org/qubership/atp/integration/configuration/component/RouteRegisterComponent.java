@@ -33,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class RouteRegisterComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouteRegisterComponent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RouteRegisterComponent.class);
     private final RouteService routeService;
     @Value("${atp.public.gateway.url:#{'http://atp-public-gateway:8080'}}")
     private String publicGatewayUrl;
@@ -60,9 +60,11 @@ public class RouteRegisterComponent {
     /**
      * Startup application listener.
      * Performs route registration.
+     *
+     * @param event ApplicationReadyEvent listened by this Event Listener.
      */
     @EventListener
-    public void routeRegister(ApplicationReadyEvent event) {
+    public void routeRegister(final ApplicationReadyEvent event) {
         register();
     }
 
@@ -72,8 +74,8 @@ public class RouteRegisterComponent {
             try {
                 publicGatewayFeignClient.register(atpRoute);
             } catch (Exception e) {
-                logger.error("Cannot register route in public gateway '" + publicGatewayUrl + "' using feign client: "
-                        + e.getMessage());
+                LOGGER.error("Cannot register route in public gateway '{}' using feign client: {}",
+                        publicGatewayUrl, e.getMessage());
             }
         }
         if (atpRoute.isInternal()) {
@@ -82,17 +84,17 @@ public class RouteRegisterComponent {
         }
     }
 
-    private void register(String gatewayUrl, AtpRoute atpRoute) {
+    private void register(final String gatewayUrl, final AtpRoute atpRoute) {
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<AtpRoute> entity = new HttpEntity<>(atpRoute, headers);
         try {
             template.postForEntity(gatewayUrl, entity, AtpRoute.class);
-            logger.info("Route {} for {} was registered in {}",
+            LOGGER.info("Route {} for {} was registered in {}",
                     atpRoute.getPath(), atpRoute.getServiceId(), gatewayUrl);
         } catch (Exception e) {
-            logger.error("Cannot register route in " + gatewayUrl, e);
+            LOGGER.error("Cannot register route in {}", gatewayUrl, e);
         }
     }
 }

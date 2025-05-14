@@ -57,14 +57,20 @@ public class RouteRegisterComponentTest {
     RouteRegisterComponent routeRegisterComponent;
     AtpRoute atpRoute;
 
+    /**
+     * Before test handler.
+     */
     @Before
     public void before() {
         atpRoute = routeService.getRoute();
         doReturn(atpRoute).when(routeService).getRoute();
     }
 
+    /**
+     * Test of Public Gateway registering: negative scenario.
+     */
     @Test
-    public void routeRegister_publicGateway_whenRegisterFailed_thenErrorLog() {
+    public void routeRegisterPublicGatewayWhenRegisterFailedThenErrorLog() {
         atpRoute.setUrl("http://localhost");
         atpRoute.setPublic(true);
         doThrow(FeignException.errorStatus("POST", Response.builder()
@@ -73,30 +79,30 @@ public class RouteRegisterComponentTest {
                 .status(500)
                 .build()))
                 .when(publicGatewayFeignClient).register(eq(atpRoute));
-        Logger fooLogger = (Logger) LoggerFactory.getLogger(RouteRegisterComponent.class);
-        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-        listAppender.start();
-        fooLogger.addAppender(listAppender);
-
-        routeRegisterComponent.routeRegister();
-
-        List<ILoggingEvent> logsList = listAppender.list;
-        assertEquals("Cannot register route in public gateway 'http://atp-public-gateway:8080' using feign client: "
-                + "[500] during [POST] to [http://localhost] [POST]: []", logsList.get(0).getMessage());
+        List<ILoggingEvent> logsList = configureAndStartAppender();
+        assertEquals("Cannot register route in public gateway 'http://atp-public-gateway:8080' "
+                + "using feign client: [500] during [POST] to [http://localhost] [POST]: []",
+                logsList.get(0).getFormattedMessage());
         assertEquals(Level.ERROR, logsList.get(0).getLevel());
     }
 
+    /**
+     * Test of Internal Gateway registering: negative scenario.
+     */
     @Test
-    public void routeRegister_internalGateway_whenRegisterFailed_thenErrorLog() {
+    public void routeRegisterInternalGatewayWhenRegisterFailedThenErrorLog() {
+        List<ILoggingEvent> logsList = configureAndStartAppender();
+        assertEquals("Cannot register route in http://atp-internal-gateway:8080/register",
+                logsList.get(0).getFormattedMessage());
+        assertEquals(Level.ERROR, logsList.get(0).getLevel());
+    }
+
+    private List<ILoggingEvent> configureAndStartAppender() {
         Logger fooLogger = (Logger) LoggerFactory.getLogger(RouteRegisterComponent.class);
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
         fooLogger.addAppender(listAppender);
-
         routeRegisterComponent.routeRegister();
-
-        List<ILoggingEvent> logsList = listAppender.list;
-        assertEquals("Cannot register route in http://atp-internal-gateway:8080/register", logsList.get(0).getMessage());
-        assertEquals(Level.ERROR, logsList.get(0).getLevel());
+        return listAppender.list;
     }
 }

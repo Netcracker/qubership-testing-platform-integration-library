@@ -37,7 +37,9 @@ public class CustomWebMvcTagsProviderTest {
     private HttpServletRequestWrapper request;
     private HttpServletResponseWrapper response;
 
-
+    /**
+     * Before tests handler.
+     */
     @Before
     public void init() {
         provider = new CustomWebMvcTagsProvider(true, new ArrayList<>());
@@ -48,61 +50,43 @@ public class CustomWebMvcTagsProviderTest {
         when(response.getStatus()).thenReturn(200);
     }
 
+    /**
+     * Test of getTags() for specified project.
+     */
     @Test
     public void testGetTags_headersHaveProjectId_ReturnTagsWithProjectId() {
-        String expectedProjectId = "5c043ea3-583d-4887-b0f3-bd46f2e7d76f";
-        when(request.getHeader(any())).thenReturn(expectedProjectId);
-
-        Iterable<Tag> tags = provider.getTags(request, response, null, null);
-
-        for (Tag tag : tags) {
-            if (tag.getKey().equals("projectId")) {
-                Assert.assertEquals(expectedProjectId, tag.getValue());
-                return;
-            }
-        }
-        Assert.fail();
+        checkProjectId("5c043ea3-583d-4887-b0f3-bd46f2e7d76f", false);
     }
 
+    /**
+     * Test of getTags() for unknown project.
+     */
     @Test
     public void testGetTags_headersHaveNotProjectId_ReturnTagsWithProjectIdIsUnknown() {
-        String expectedProjectId = "unknown";
-        when(request.getHeader(any())).thenReturn(expectedProjectId);
-
-        Iterable<Tag> tags = provider.getTags(request, response, null, null);
-
-        for (Tag tag : tags) {
-            if (tag.getKey().equals("projectId")) {
-                Assert.assertEquals(expectedProjectId, tag.getValue());
-                return;
-            }
-        }
-        Assert.fail();
+        checkProjectId("unknown", false);
     }
 
+    /**
+     * Test of getLongRequestTags() for specified project.
+     */
     @Test
     public void testLongRequestTags_headersHaveProjectId_ReturnTagsWithProjectId() {
-        String expectedProjectId = "5c043ea3-583d-4887-b0f3-bd46f2e7d76f";
-        when(request.getHeader(any())).thenReturn(expectedProjectId);
-
-        Iterable<Tag> tags = provider.getLongRequestTags(request, null);
-
-        for (Tag tag : tags) {
-            if (tag.getKey().equals("projectId")) {
-                Assert.assertEquals(expectedProjectId, tag.getValue());
-                return;
-            }
-        }
-        Assert.fail();
+        checkProjectId("5c043ea3-583d-4887-b0f3-bd46f2e7d76f", true);
     }
 
+    /**
+     * Test of getLongRequestTags() for unknown project.
+     */
     @Test
     public void testGetLongRequestTags_headersHaveNotProjectId_ReturnTagsWithProjectIdIsUnknown() {
-        String expectedProjectId = "unknown";
+        checkProjectId("unknown", true);
+    }
+
+    private void checkProjectId(String expectedProjectId, boolean isGetLong) {
         when(request.getHeader(any())).thenReturn(expectedProjectId);
-
-        Iterable<Tag> tags = provider.getLongRequestTags(request,  null);
-
+        Iterable<Tag> tags = isGetLong
+                ? provider.getLongRequestTags(request,  null)
+                : provider.getTags(request, response, null, null);
         for (Tag tag : tags) {
             if (tag.getKey().equals("projectId")) {
                 Assert.assertEquals(expectedProjectId, tag.getValue());
@@ -111,4 +95,5 @@ public class CustomWebMvcTagsProviderTest {
         }
         Assert.fail();
     }
+
 }

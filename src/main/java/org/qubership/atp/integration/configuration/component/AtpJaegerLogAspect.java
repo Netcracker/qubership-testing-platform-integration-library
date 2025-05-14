@@ -51,7 +51,7 @@ public class AtpJaegerLogAspect {
      * Additional log to jaeger.
      */
     @Around(value = "@annotation(atpJaegerLog)")
-    public Object jaegerLog(ProceedingJoinPoint joinPoint, AtpJaegerLog atpJaegerLog) throws Throwable {
+    public Object jaegerLog(final ProceedingJoinPoint joinPoint, final AtpJaegerLog atpJaegerLog) throws Throwable {
         Optional<ScopedSpan> nextSpan = Optional.ofNullable(tracer).map(t -> {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             return t.startScopedSpan(signature.getDeclaringType().getSimpleName() + "."
@@ -77,7 +77,7 @@ public class AtpJaegerLogAspect {
         }
     }
 
-    private String getValue(ProceedingJoinPoint joinPoint, String argument) {
+    private String getValue(final ProceedingJoinPoint joinPoint, String argument) {
         Object[] args = joinPoint.getArgs();
         if (argument.startsWith("#")) {
             String[] parametersNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();
@@ -92,7 +92,7 @@ public class AtpJaegerLogAspect {
         return parseExpression(args, argument);
     }
 
-    private String parseExpression(Object[] args, String argument) {
+    private String parseExpression(final Object[] args, final String argument) {
         try {
             return (String) expressionParser.parseExpression(argument).getValue(args);
         } catch (Exception e) {
