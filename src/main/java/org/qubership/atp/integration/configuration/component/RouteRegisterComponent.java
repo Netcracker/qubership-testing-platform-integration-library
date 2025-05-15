@@ -33,19 +33,40 @@ import org.springframework.web.client.RestTemplate;
 
 public class RouteRegisterComponent {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteRegisterComponent.class);
+
+    /**
+     * Route Service.
+     */
     private final RouteService routeService;
+
+    /**
+     * Url to public gateway.
+     */
     @Value("${atp.public.gateway.url:#{'http://atp-public-gateway:8080'}}")
     private String publicGatewayUrl;
+
+    /**
+     * Url to internal gateway.
+     */
     @Value("${atp.internal.gateway.url:#{'http://atp-internal-gateway:8080'}}")
     private String internalGatewayUrl;
+
+    /**
+     * Public gateway feign client.
+     */
     @Autowired
     private PublicGatewayFeignClient publicGatewayFeignClient;
 
     /**
      * Constructor.
+     *
+     * @param routeService Route Service.
      */
-    public RouteRegisterComponent(RouteService routeService) {
+    public RouteRegisterComponent(final RouteService routeService) {
         this.routeService = routeService;
     }
 
@@ -79,8 +100,7 @@ public class RouteRegisterComponent {
             }
         }
         if (atpRoute.isInternal()) {
-            String internalGatewayUrl = this.internalGatewayUrl + "/register";
-            register(internalGatewayUrl, atpRoute);
+            register(this.internalGatewayUrl + "/register", atpRoute);
         }
     }
 

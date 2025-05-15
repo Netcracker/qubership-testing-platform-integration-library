@@ -29,12 +29,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(MetricsProperties.class)
 public class AtpWebMetricsConfiguration {
+
+    /**
+     * Metrics Properties.
+     */
     private final MetricsProperties properties;
 
+    /**
+     * Constructor from Metrics Properties.
+     *
+     * @param properties Metrics Properties to set.
+     */
     public AtpWebMetricsConfiguration(final MetricsProperties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Create Web MVC Tags Provider using contributors parameter and properties field.
+     *
+     * @param contributors Provider of WebMvcTagsContributor
+     * @return new CustomWebMvcTagsProvider configured.
+     */
     @Bean
     public CustomWebMvcTagsProvider webMvcTagsProvider(final ObjectProvider<WebMvcTagsContributor> contributors) {
         return new CustomWebMvcTagsProvider(this.properties.getWeb().getServer().getRequest().isIgnoreTrailingSlash(),

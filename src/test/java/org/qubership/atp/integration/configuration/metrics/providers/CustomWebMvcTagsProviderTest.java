@@ -33,8 +33,20 @@ import org.junit.Test;
 import io.micrometer.core.instrument.Tag;
 
 public class CustomWebMvcTagsProviderTest {
+
+    /**
+     * CustomWebMvcTags Provider.
+     */
     private CustomWebMvcTagsProvider provider;
+
+    /**
+     * HttpServletRequest Wrapper.
+     */
     private HttpServletRequestWrapper request;
+
+    /**
+     * HttpServletResponse Wrapper.
+     */
     private HttpServletResponseWrapper response;
 
     /**
@@ -54,7 +66,7 @@ public class CustomWebMvcTagsProviderTest {
      * Test of getTags() for specified project.
      */
     @Test
-    public void testGetTags_headersHaveProjectId_ReturnTagsWithProjectId() {
+    public void testGetTagsHeadersHaveProjectIdReturnTagsWithProjectId() {
         checkProjectId("5c043ea3-583d-4887-b0f3-bd46f2e7d76f", false);
     }
 
@@ -62,7 +74,7 @@ public class CustomWebMvcTagsProviderTest {
      * Test of getTags() for unknown project.
      */
     @Test
-    public void testGetTags_headersHaveNotProjectId_ReturnTagsWithProjectIdIsUnknown() {
+    public void testGetTagsHeadersHaveNotProjectIdReturnTagsWithProjectIdIsUnknown() {
         checkProjectId("unknown", false);
     }
 
@@ -70,7 +82,7 @@ public class CustomWebMvcTagsProviderTest {
      * Test of getLongRequestTags() for specified project.
      */
     @Test
-    public void testLongRequestTags_headersHaveProjectId_ReturnTagsWithProjectId() {
+    public void testLongRequestTagsHeadersHaveProjectIdReturnTagsWithProjectId() {
         checkProjectId("5c043ea3-583d-4887-b0f3-bd46f2e7d76f", true);
     }
 
@@ -78,11 +90,11 @@ public class CustomWebMvcTagsProviderTest {
      * Test of getLongRequestTags() for unknown project.
      */
     @Test
-    public void testGetLongRequestTags_headersHaveNotProjectId_ReturnTagsWithProjectIdIsUnknown() {
+    public void testGetLongRequestTagsHeadersHaveNotProjectIdReturnTagsWithProjectIdIsUnknown() {
         checkProjectId("unknown", true);
     }
 
-    private void checkProjectId(String expectedProjectId, boolean isGetLong) {
+    private void checkProjectId(final String expectedProjectId, final boolean isGetLong) {
         when(request.getHeader(any())).thenReturn(expectedProjectId);
         Iterable<Tag> tags = isGetLong
                 ? provider.getLongRequestTags(request,  null)

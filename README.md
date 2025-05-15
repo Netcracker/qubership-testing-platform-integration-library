@@ -7,7 +7,7 @@ The library is for integration of ATP2 with Registry service, Public gateway ser
 ## How to add
 
 ### How to add into SpringBoot application
-#### 1. Add dependency:
+#### 1. Add dependency
 
 ```xml
 <dependency>
@@ -49,7 +49,7 @@ eureka.client.serviceUrl.defaultZone= http://atp-registry-service:8761/eureka/
 atp.service.path=/api/atp-service-name/v1/**
 ```
 
-- To start the service without registering in the registry, one should set: 
+- To start the service without registering in the registry, one should set:
 ```properties
 eureka.client.enabled=false
 ```
@@ -67,7 +67,7 @@ atp.logging.controller.uri.ignore=${ATP_HTTP_LOGGING_URI_IGNORE:/deployment/read
 ```
 
 * By default, _atp.logging.controller.headers_ and _atp.logging.feignclient.headers_ are false.
-* _atp.logging.controller.headers_ - To log request/response headers for RestController. 
+* _atp.logging.controller.headers_ - To log request/response headers for RestController.
 * _atp.logging.controller.headers.ignore_ - To ignore specified headers while logging for RestController. Tokens should be separated with spaces.
 * _atp.logging.controller.uri.ignore_ - To ignore specified endpoints while logging.
 * Properties _atp.logging.controller.headers.ignore_ and _atp.logging.controller.uri.ignore_ support regular expressions.
@@ -159,7 +159,7 @@ public void consume(KafkaMailResponse mailResponse) {
 ```
 
 ## Audit Logging
-### 1. Add properties into application.properties
+### 1. Add audit logging properties into application.properties
 Mandatory properties:
 ```properties
 spring.kafka.producer.bootstrap-servers=...
@@ -174,14 +174,14 @@ atp.audit.logging.topic.replicas=3
 ```
 
 ## Logging business IDs
-### Default list of business IDs:
+### Default list of business IDs
 ```properties
 userId,projectId,executionRequestId,testRunId,bvTestRunId,bvTestCaseId,environmentId,
 systemId,subscriberId,tsgSessionId,svpSessionId,dataSetId,dataSetListId,attributeId,
 itfLiteRequestId,reportType,itfSessionId,itfContextId,callChainId
 ```
 
-### Property to set business IDs:
+### Property to set business IDs
 ```properties
 atp.logging.business.keys=userId,projectId
 ```

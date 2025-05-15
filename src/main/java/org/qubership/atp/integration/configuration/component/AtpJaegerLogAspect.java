@@ -40,15 +40,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AtpJaegerLogAspect {
 
+    /**
+     * Tracer object.
+     */
     private final Tracer tracer;
+
+    /**
+     * Expression Parser.
+     */
     private final ExpressionParser expressionParser = new SpelExpressionParser();
 
-    public AtpJaegerLogAspect(@Autowired(required = false) Tracer tracer) {
+    /**
+     * Constructor.
+     *
+     * @param tracer Tracer object.
+     */
+    public AtpJaegerLogAspect(@Autowired(required = false) final Tracer tracer) {
         this.tracer = tracer;
     }
 
     /**
      * Additional log to jaeger.
+     *
+     * @param joinPoint Join Point to add span to
+     * @param atpJaegerLog Jaeger Log Object
+     * @return Jaeger Log Object.
      */
     @Around(value = "@annotation(atpJaegerLog)")
     public Object jaegerLog(final ProceedingJoinPoint joinPoint, final AtpJaegerLog atpJaegerLog) throws Throwable {
@@ -77,15 +93,14 @@ public class AtpJaegerLogAspect {
         }
     }
 
-    private String getValue(final ProceedingJoinPoint joinPoint, String argument) {
+    private String getValue(final ProceedingJoinPoint joinPoint, final String argument) {
         Object[] args = joinPoint.getArgs();
         if (argument.startsWith("#")) {
             String[] parametersNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();
-            for (int argIdx = 0; argIdx < parametersNames.length; argIdx++) {
-                if (argument.startsWith("#" + parametersNames[argIdx] + ".")
-                        || argument.equals("#" + parametersNames[argIdx])) {
-                    argument = argument.replaceFirst("#" + parametersNames[argIdx], "[" + argIdx + "]");
-                    break;
+            for (int id = 0; id < parametersNames.length; id++) {
+                if (argument.startsWith("#" + parametersNames[id] + ".")
+                        || argument.equals("#" + parametersNames[id])) {
+                    return parseExpression(args, argument.replaceFirst("#" + parametersNames[id], "[" + id + "]"));
                 }
             }
         }

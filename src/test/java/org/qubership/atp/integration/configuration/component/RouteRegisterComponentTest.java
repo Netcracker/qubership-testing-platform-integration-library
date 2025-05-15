@@ -49,13 +49,28 @@ import feign.Response;
 @SpringBootTest(classes = {RouteService.class, RouteRegisterComponent.class})
 public class RouteRegisterComponentTest {
 
+    /**
+     * Public Gateway Feign Client Bean.
+     */
     @MockBean
     PublicGatewayFeignClient publicGatewayFeignClient;
+
+    /**
+     * Route Service Bean.
+     */
     @SpyBean
     RouteService routeService;
+
+    /**
+     * Route Register Component Bean.
+     */
     @Autowired
     RouteRegisterComponent routeRegisterComponent;
-    AtpRoute atpRoute;
+
+    /**
+     * AtpRoute object.
+     */
+    private AtpRoute atpRoute;
 
     /**
      * Before test handler.

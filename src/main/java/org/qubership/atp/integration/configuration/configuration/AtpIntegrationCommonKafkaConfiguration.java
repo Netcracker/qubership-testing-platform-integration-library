@@ -34,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnPropertyNotEmpty("spring.kafka.producer.bootstrap-servers")
 public class AtpIntegrationCommonKafkaConfiguration {
 
+    /**
+     * Kafka Producer Bootstrap Servers configuration setting.
+     */
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
 
