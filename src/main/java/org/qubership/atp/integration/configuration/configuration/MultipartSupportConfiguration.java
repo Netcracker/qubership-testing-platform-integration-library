@@ -29,9 +29,17 @@ import feign.form.spring.SpringFormEncoder;
 @Configuration
 public class MultipartSupportConfiguration {
 
+    /**
+     * ObjectFactory of HttpMessageConverters bean.
+     */
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
 
+    /**
+     * Create feignFormEncoder bean.
+     *
+     * @return new SpringFormEncoder object configured with messageConverters.
+     */
     @Bean
     public Encoder feignFormEncoder() {
         return new SpringFormEncoder(new SpringEncoder(messageConverters));

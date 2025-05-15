@@ -33,12 +33,20 @@ public interface MailSenderFeignClient {
 
     /**
      * Send mail to mail-sender.
+     *
+     * @param mail MailRequest to be sent
+     * @return ResponseEntity object.
      */
     @PostMapping(value = "${feign.atp.mailsender.route}/api/v1/mail-sender/mail/send")
     ResponseEntity send(MailRequest mail);
 
     /**
      * Send mail with attachment to mail-sender.
+     *
+     * @param mail String email address
+     * @param attachments List of MultipartFile attachment objects
+     * @param inlines List of MultipartFile inline objects
+     * @return ResponseEntity object.
      */
     @PostMapping(value = "${feign.atp.mailsender.route}/api/v1/mail-sender/mail/send",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

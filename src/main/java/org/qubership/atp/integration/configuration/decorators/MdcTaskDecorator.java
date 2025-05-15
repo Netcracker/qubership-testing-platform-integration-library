@@ -28,7 +28,7 @@ public class MdcTaskDecorator implements TaskDecorator {
      * @param runnable the original {@code Runnable}
      */
     @Override
-    public Runnable decorate(Runnable runnable) {
+    public Runnable decorate(final Runnable runnable) {
         Map<String, String> contextMap = MDC.getCopyOfContextMap();
         return () -> {
             try {

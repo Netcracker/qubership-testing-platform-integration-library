@@ -35,12 +35,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class KafkaAdminHelper {
 
+    /**
+     * KafkaAdmin bean.
+     */
     private final KafkaAdmin kafkaAdmin;
 
     /**
      * Create or update Kafka topic with specified number of partitions and replicas.
+     *
+     * @param topic String topic name
+     * @param partitions int number of partitions
+     * @param replicas short replication factor.
      */
-    public void createOrUpdateTopic(String topic, int partitions, short replicas) {
+    public void createOrUpdateTopic(final String topic, final int partitions, final short replicas) {
         try {
             log.info("Start createOrUpdateTopic: create or update topic [name={}, partitions={}, replicationFactor={}]",
                     topic, partitions, replicas);
@@ -60,8 +67,7 @@ public class KafkaAdminHelper {
                 ).all().get();
             }
         } catch (Exception ex) {
-            log.error("Cannot create topic [name={}, partitions={}, replicas={}]", topic,
-                    partitions, replicas);
+            log.error("Cannot create topic [name={}, partitions={}, replicas={}]", topic, partitions, replicas);
         }
     }
 }

@@ -28,13 +28,25 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "atp.notification.mode", havingValue = "rest", matchIfMissing = true)
 public class RestNotificationClientConfiguration {
 
+    /**
+     * Create notificationClient bean.
+     *
+     * @param notificationFeignClient NotificationFeignClient bean
+     * @return new RestNotificationClient object configured with notificationFeignClient.
+     */
     @Bean
-    public NotificationClient notificationClient(NotificationFeignClient notificationFeignClient) {
+    public NotificationClient notificationClient(final NotificationFeignClient notificationFeignClient) {
         return new RestNotificationClient(notificationFeignClient);
     }
 
+    /**
+     * Create notificationService bean.
+     *
+     * @param notificationClient NotificationClient bean
+     * @return new NotificationService object configured with notificationClient.
+     */
     @Bean
-    public NotificationService notificationService(NotificationClient notificationClient) {
+    public NotificationService notificationService(final NotificationClient notificationClient) {
         return new NotificationService(notificationClient);
     }
 }

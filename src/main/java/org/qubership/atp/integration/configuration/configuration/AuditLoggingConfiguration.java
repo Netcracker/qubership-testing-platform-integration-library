@@ -43,23 +43,39 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @ComponentScan("org.qubership.atp.integration.configuration.*")
 public class AuditLoggingConfiguration {
 
+    /**
+     * Topic name for audit logging configuration setting.
+     */
     @Value("${atp.audit.logging.topic.name}")
     private String topic;
 
+    /**
+     * Number of audit logging Topic partitions configuration setting.
+     */
     @Value("${atp.audit.logging.topic.partitions:1}")
     private int partitions;
 
+    /**
+     * Number of audit logging Topic replicas configuration setting.
+     */
     @Value("${atp.audit.logging.topic.replicas:3}")
     private short replicas;
 
+    /**
+     * Kafka Producer Bootstrap Server URL for reporting.
+     */
     @Value("${atp.reporting.kafka.producer.bootstrap-server}")
     private String bootstrapServers;
 
     /**
      * Create and configure Kafka audit logging producer.
+     * Also, create or update topic according configuration settings.
+     *
+     * @param kafkaAdminHelper bean
+     * @return new KafkaProducer configured.
      */
     @Bean
-    public KafkaProducer<UUID, AuditLoggingMessage> auditLoggingKafkaProducer(KafkaAdminHelper kafkaAdminHelper) {
+    public KafkaProducer<UUID, AuditLoggingMessage> auditLoggingKafkaProducer(final KafkaAdminHelper kafkaAdminHelper) {
         kafkaAdminHelper.createOrUpdateTopic(topic, partitions, replicas);
 
         Properties properties = new Properties();
@@ -70,14 +86,31 @@ public class AuditLoggingConfiguration {
         return new KafkaProducer<>(properties);
     }
 
+    /**
+     * Create auditLoggingService bean.
+     *
+     * @param producer Audit Logging Message producer
+     * @param jwtHelper JwtParseHelper bean
+     * @param requestHelper HttpRequestParseHelper bean
+     * @return new AuditLoggingService bean constructed with parameters given.
+     */
     @Bean
-    public AuditLoggingService auditLoggingService(Producer<UUID, AuditLoggingMessage> producer,
-                                                   JwtParseHelper jwtHelper, HttpRequestParseHelper requestHelper) {
+    public AuditLoggingService auditLoggingService(final Producer<UUID, AuditLoggingMessage> producer,
+                                                   final JwtParseHelper jwtHelper,
+                                                   final HttpRequestParseHelper requestHelper) {
         return new AuditLoggingService(producer, jwtHelper, requestHelper);
     }
 
+    /**
+     * Create new Filter bean.
+     *
+     * @param auditLoggingService AuditLoggingService bean
+     * @param jwtHelper JwtParseHelper bean
+     * @return new AuditLoggingFilter bean constructed with auditLoggingService and jwtHelper parameters.
+     */
     @Bean
-    public Filter auditLoggingFilter(AuditLoggingService auditLoggingService, JwtParseHelper jwtHelper) {
+    public Filter auditLoggingFilter(final AuditLoggingService auditLoggingService,
+                                     final JwtParseHelper jwtHelper) {
         return new AuditLoggingFilter(auditLoggingService, jwtHelper);
     }
 }

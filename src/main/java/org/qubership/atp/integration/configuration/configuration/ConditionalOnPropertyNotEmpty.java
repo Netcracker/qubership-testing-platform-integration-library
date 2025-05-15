@@ -35,13 +35,23 @@ public @interface ConditionalOnPropertyNotEmpty {
 
     /**
      * Get mentioned property value.
+     *
+     * @return String value of the property.
      */
     String value();
 
     class OnPropertyNotEmptyCondition implements Condition {
 
+        /**
+         * Check if value is not empty.
+         *
+         * @param context  the condition context
+         * @param metadata the metadata of the {@link org.springframework.core.type.AnnotationMetadata class}
+         *                 or {@link org.springframework.core.type.MethodMetadata method} being checked
+         * @return true if the value is not null and trimmed value is not empty; otherwise false.
+         */
         @Override
-        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
             Map<String, Object> attrs = metadata.getAnnotationAttributes(ConditionalOnPropertyNotEmpty.class.getName());
             if (Objects.isNull(attrs)) {
                 return false;

@@ -17,6 +17,7 @@
 package org.qubership.atp.integration.configuration.helpers;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,58 +30,80 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtParseHelper {
 
+    /**
+     * Name of property with session id value.
+     */
     private static final String SESSION_STATE_KEY = "session_state";
+
+    /**
+     * Name of property with username value.
+     */
     private static final String NAME_KEY = "name";
+
+    /**
+     * Name of property with user id value.
+     */
     private static final String USER_ID_KEY = "sub";
+
+    /**
+     * Name of property with client id value.
+     */
     private static final String CLIENT_ID_KEY = "clientId";
 
     /**
-     * Detect if current auh token is M2M.
+     * Detect if current auth token is M2M.
+     *
+     * @param token String token to parse
+     * @return true if it's M2M token; otherwise false.
      */
-    public boolean isM2Mtoken(String token) {
-        String clientId = getValueFromTokenByKey(token, CLIENT_ID_KEY);
-
-        return StringUtils.isNotBlank(clientId);
+    public boolean isM2Mtoken(final String token) {
+        return StringUtils.isNotBlank(getValueFromTokenByKey(token, CLIENT_ID_KEY));
     }
 
     /**
      * Get session id attribute from JWT token.
+     *
+     * @param token String token to parse
+     * @return UUID session id.
      */
-    public UUID getSessionIdFromToken(String token) {
-        String sessionStateValue = getValueFromTokenByKey(token, SESSION_STATE_KEY);
-
-        return UUID.fromString(sessionStateValue);
+    public UUID getSessionIdFromToken(final String token) {
+        return UUID.fromString(Objects.requireNonNull(getValueFromTokenByKey(token, SESSION_STATE_KEY)));
     }
 
-    public String getUsernameFromToken(String token) {
+    /**
+     * Get username attribute from JWT token.
+     *
+     * @param token String token to parse
+     * @return String username.
+     */
+    public String getUsernameFromToken(final String token) {
         return getValueFromTokenByKey(token, NAME_KEY);
     }
 
     /**
      * Get user id attribute from JWT token.
+     *
+     * @param token String token to parse
+     * @return UUID user id.
      */
-    public UUID getUserIdFromToken(String token) {
-        String userIdValue = getValueFromTokenByKey(token, USER_ID_KEY);
-
-        return UUID.fromString(userIdValue);
+    public UUID getUserIdFromToken(final String token) {
+        return UUID.fromString(Objects.requireNonNull(getValueFromTokenByKey(token, USER_ID_KEY)));
     }
 
-    private String getValueFromTokenByKey(String token, String key) {
+    private String getValueFromTokenByKey(final String token, final String key) {
         if (StringUtils.isNotBlank(token)) {
             try {
                 String[] splitToken = token.split(" ");
                 if (splitToken.length < 2) {
                     return null;
                 }
-                token = splitToken[1];
                 JsonParser parser = JsonParserFactory.getJsonParser();
-                String claims = JwtHelper.decode(token).getClaims();
+                String claims = JwtHelper.decode(splitToken[1]).getClaims();
                 Map<String, ?> tokenDataMap = parser.parseMap(claims);
 
                 if (tokenDataMap.containsKey(key)) {
                     return tokenDataMap.get(key).toString();
                 }
-
                 return null;
             } catch (Exception e) {
                 log.error("Cannot parse token with error: ", e);

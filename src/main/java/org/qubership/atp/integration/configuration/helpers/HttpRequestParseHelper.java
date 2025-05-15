@@ -28,14 +28,16 @@ import lombok.extern.slf4j.Slf4j;
 public class HttpRequestParseHelper {
 
     /**
-     * Get and transform to UUID selected request header.
+     * Get request header value by header name and transform it to UUID.
      *
      * @param request    http servlet request
      * @param headerName header name
-     * @param required   throw IllegalArgumentException if request header required and value is absent
+     * @param required   throw IllegalArgumentException if request header required but value is absent
      * @return request header UUID value
      */
-    public UUID getRequestUuidHeader(HttpServletRequest request, String headerName, boolean required) {
+    public UUID getRequestUuidHeader(final HttpServletRequest request,
+                                     final String headerName,
+                                     final boolean required) {
         String headerValue = request.getHeader(headerName);
 
         if (!StringUtils.isEmpty(headerValue)) {
@@ -49,29 +51,31 @@ public class HttpRequestParseHelper {
     }
 
     /**
-     * Parse on browser agent.
+     * Parse of browser agent name.
+     *
+     * @param userAgent String name of browser sender of the request.
+     * @return String brief browser agent name calculated.
      */
-    public String getBrowserAgent(String userAgent) {
+    public String getBrowserAgent(final String userAgent) {
         String browserAgent = "unknown browser";
-        userAgent = userAgent.toLowerCase();
-        if (userAgent.contains("edg")) {
+        String agent = userAgent.toLowerCase();
+        if (agent.contains("edg")) {
             browserAgent = "Edge";
-        } else if (userAgent.contains("firefox")) {
+        } else if (agent.contains("firefox")) {
             browserAgent = "Mozilla";
-        } else if (userAgent.contains("opera") || userAgent.contains("presto") || userAgent.contains("opr")) {
+        } else if (agent.contains("opera") || agent.contains("presto") || agent.contains("opr")) {
             browserAgent = "Opera";
-        } else if (userAgent.contains("apple") && userAgent.contains("safari") && userAgent.contains("mobile")) {
+        } else if (agent.contains("apple") && agent.contains("safari") && agent.contains("mobile")) {
             browserAgent = "Safari";
-        } else if (userAgent.contains("msie")) {
-            browserAgent = "EI";
-        } else if (userAgent.contains("chrome")) {
+        } else if (agent.contains("msie")) {
+            browserAgent = "IE";
+        } else if (agent.contains("chrome")) {
             browserAgent = "Chrome";
-        } else if (userAgent.contains("gecko")) {
+        } else if (agent.contains("gecko")) {
             browserAgent = "browser on core Gecko";
-        } else if (userAgent.contains("konqueror")) {
+        } else if (agent.contains("konqueror")) {
             browserAgent = "Browser on core Konqueror";
         }
-
         return browserAgent;
     }
 }

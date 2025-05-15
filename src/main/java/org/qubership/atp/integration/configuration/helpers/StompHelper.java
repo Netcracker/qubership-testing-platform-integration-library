@@ -23,8 +23,11 @@ public class StompHelper {
 
     /**
      * Get token string from accessor.
+     *
+     * @param accessor StompHeaderAccessor bean
+     * @return String Authorization Header value.
      */
-    public String extractBearerToken(StompHeaderAccessor accessor) {
+    public String extractBearerToken(final StompHeaderAccessor accessor) {
         return accessor.getFirstNativeHeader(Constants.AUTHORIZATION_HEADER_NAME);
     }
 }

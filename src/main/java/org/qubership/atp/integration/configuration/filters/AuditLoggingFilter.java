@@ -38,13 +38,29 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuditLoggingFilter extends OncePerRequestFilter {
 
+    /**
+     * AuditLoggingService bean.
+     */
     private final AuditLoggingService auditLoggingService;
 
+    /**
+     * JwtParseHelper bean.
+     */
     private final JwtParseHelper jwtParseHelper;
 
+    /**
+     * Handler to perform audit logging of request.
+     *
+     * @param request HttpServletRequest received
+     * @param response HttpServletResponse to be sent
+     * @param filterChain Chain of filters
+     * @throws ServletException in case Servlet processing errors
+     * @throws IOException in case request/response processing IO errors.
+     */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final FilterChain filterChain) throws ServletException, IOException {
         log.debug("Intercept request for audit logging");
 
         final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);

@@ -43,24 +43,40 @@ import lombok.extern.slf4j.Slf4j;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class MdcHttpFilter extends OncePerRequestFilter {
 
+    /**
+     * JwtParseHelper bean.
+     */
     private final JwtParseHelper jwtParseHelper;
 
+    /**
+     * List of String business IDs.
+     */
     private final List<String> businessIds;
 
+    /**
+     * Handler to perform auth token processing of request.
+     *
+     * @param request HttpServletRequest received
+     * @param response HttpServletResponse to be sent
+     * @param filterChain Chain of filters
+     * @throws ServletException in case Servlet processing errors
+     * @throws IOException in case request/response processing IO errors.
+     */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final FilterChain filterChain) throws ServletException, IOException {
         MDC.clear();
         businessIds.forEach(idName -> processHeaders(request, idName));
         processUserId(request);
         filterChain.doFilter(request, response);
     }
 
-    private boolean processHeaders(HttpServletRequest request, String idName) {
+    private boolean processHeaders(final HttpServletRequest request, final String idName) {
         return MdcUtils.put(idName, MdcUtils.getHeaderFromRequest(request, MdcUtils.convertIdNameToHeader(idName)));
     }
 
-    private void processUserId(HttpServletRequest request) {
+    private void processUserId(final HttpServletRequest request) {
         final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authToken != null && StringUtils.startsWithIgnoreCase(authToken, "Bearer ")) {
             try {

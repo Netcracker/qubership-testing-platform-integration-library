@@ -31,16 +31,29 @@ import org.springframework.kafka.core.KafkaTemplate;
 @Import({KafkaMailSenderConfiguration.class, MultipartSupportConfiguration.class})
 public class MailSenderConfiguration {
 
+    /**
+     * Create mailSenderService bean.
+     *
+     * @param mailSenderFeignClient FeignClient for mailSender
+     * @return new MailSenderService object configured.
+     */
     @Bean
     @ConditionalOnProperty(name = "kafka.mails.enable", havingValue = "false", matchIfMissing = true)
-    public MailSenderService mailSenderService(MailSenderFeignClient mailSenderFeignClient) {
+    public MailSenderService mailSenderService(final MailSenderFeignClient mailSenderFeignClient) {
         return new MailSenderService(null, mailSenderFeignClient);
     }
 
+    /**
+     * Create mailSenderServiceWithKafka bean.
+     *
+     * @param kafkaTemplate KafkaTemplate bean
+     * @param mailSenderFeignClient FeignClient for mailSender
+     * @return new MailSenderService object configured.
+     */
     @Bean
     @ConditionalOnProperty(name = "kafka.mails.enable", havingValue = "true")
-    public MailSenderService mailSenderServiceWithKafka(KafkaTemplate<UUID, MailRequest> kafkaTemplate,
-                                               MailSenderFeignClient mailSenderFeignClient) {
+    public MailSenderService mailSenderServiceWithKafka(final KafkaTemplate<UUID, MailRequest> kafkaTemplate,
+                                                        final MailSenderFeignClient mailSenderFeignClient) {
         return new MailSenderService(kafkaTemplate, mailSenderFeignClient);
     }
 

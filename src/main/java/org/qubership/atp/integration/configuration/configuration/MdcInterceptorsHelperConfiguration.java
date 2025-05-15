@@ -27,16 +27,30 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MdcInterceptorsHelperConfiguration {
 
+    /**
+     * Create feignClientMdcContextInterceptor bean.
+     *
+     * @param businessIds String list of business IDs delimited with comma
+     * @return new FeignClientMdcContextInterceptor object configured for businessIds.
+     */
     @Bean
     public FeignClientMdcContextInterceptor feignClientMdcContextInterceptor(
-            @Qualifier("businessIdsString") String businessIds) {
+            @Qualifier("businessIdsString") final String businessIds) {
         return new FeignClientMdcContextInterceptor(businessIds);
     }
 
+    /**
+     * Create mdcChannelInterceptor bean.
+     *
+     * @param stompHelper StompHelper bean
+     * @param jwtParseHelper JwtParseHelper bean
+     * @param businessIds String list of business IDs delimited with comma
+     * @return new MdcChannelInterceptor object configured for businessIds.
+     */
     @Bean
-    public MdcChannelInterceptor mdcChannelInterceptor(StompHelper stompHelper,
-                                                       JwtParseHelper jwtParseHelper,
-                                                       @Qualifier("businessIdsString") String businessIds) {
+    public MdcChannelInterceptor mdcChannelInterceptor(final StompHelper stompHelper,
+                                                       final JwtParseHelper jwtParseHelper,
+                                                       @Qualifier("businessIdsString") final String businessIds) {
         return new MdcChannelInterceptor(stompHelper, jwtParseHelper, businessIds);
     }
 }

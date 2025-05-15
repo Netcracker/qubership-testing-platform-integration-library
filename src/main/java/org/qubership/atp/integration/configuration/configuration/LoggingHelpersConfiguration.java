@@ -31,34 +31,63 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LoggingHelpersConfiguration {
 
+    /**
+     * String of Business IDs delimited with comma.
+     */
     @Value("${atp.logging.business.keys:userId,projectId,executionRequestId,testRunId,bvTestRunId,bvTestCaseId,"
             + "environmentId,systemId,subscriberId,tsgSessionId,svpSessionId,dataSetId,dataSetListId,attributeId,"
             + "itfLiteRequestId,reportType,itfSessionId,itfContextId,callChainId}")
     private String businessIds;
 
+    /**
+     * Create businessIdsString bean.
+     *
+     * @return businessIds String.
+     */
     @Bean
     @Qualifier("businessIdsString")
     public String businessIdsString() {
         return businessIds;
     }
 
+    /**
+     * Create httpRequestParseHelper bean.
+     *
+     * @return new HttpRequestParseHelper object.
+     */
     @Bean
     public HttpRequestParseHelper httpRequestParseHelper() {
         return new HttpRequestParseHelper();
     }
 
+    /**
+     * Create jwtParseHelper bean.
+     *
+     * @return new JwtParseHelper object.
+     */
     @Bean
     public JwtParseHelper jwtParseHelper() {
         return new JwtParseHelper();
     }
 
+    /**
+     * Create stompHelper bean.
+     *
+     * @return new StompHelper object.
+     */
     @Bean
     public StompHelper stompHelper() {
         return new StompHelper();
     }
 
+    /**
+     * Create mdcHttpFilter bean.
+     *
+     * @param jwtParseHelper JwtParseHelper bean
+     * @return new MdcHttpFilter object configured for businessIds.
+     */
     @Bean
-    public Filter mdcHttpFilter(JwtParseHelper jwtParseHelper) {
+    public Filter mdcHttpFilter(final JwtParseHelper jwtParseHelper) {
         return new MdcHttpFilter(jwtParseHelper, MdcUtils.convertIdNamesToList(businessIds));
     }
 }

@@ -28,11 +28,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class RouteInfoController {
     private final RouteService routeService;
 
+    /**
+     * Constructor.
+     *
+     * @param routeService RouteService.
+     */
     @Autowired
-    public RouteInfoController(RouteService routeService) {
+    public RouteInfoController(final RouteService routeService) {
         this.routeService = routeService;
     }
 
+    /**
+     * Method serving "/routeInfo" endpoint. It returns getRoute() result of routeService.
+     *
+     * @return AtpRoute object - result of routeService.getRoute().
+     */
     @GetMapping("/routeInfo")
     public AtpRoute getRouteInfo() {
         return routeService.getRoute();

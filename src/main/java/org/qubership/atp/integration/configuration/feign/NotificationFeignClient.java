@@ -29,6 +29,8 @@ public interface NotificationFeignClient {
 
     /**
      * Send notifications to atp-notification.
+     *
+     * @param notifications List of Notification objects.
      */
     @RequestMapping(
             method = RequestMethod.POST,

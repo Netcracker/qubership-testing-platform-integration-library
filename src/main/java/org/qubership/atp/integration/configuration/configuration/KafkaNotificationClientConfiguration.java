@@ -47,12 +47,27 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(value = "atp.notification.mode", havingValue = "kafka")
 public class KafkaNotificationClientConfiguration {
 
+    /**
+     * Name of Kafka Notification Topic.
+     */
     @Value("${kafka.notification.topic.name}")
     private String kafkaTopic;
+
+    /**
+     * Number of partitions of Kafka Notification Topic.
+     */
     @Value("${kafka.notification.topic.partitions:1}")
     private int kafkaPartitions;
+
+    /**
+     * Number of replicas of Kafka Notification Topic.
+     */
     @Value("${kafka.notification.topic.replicas:3}")
     private short kafkaReplicas;
+
+    /**
+     * Kafka Producer Bootstrap Server URL.
+     */
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -93,21 +108,39 @@ public class KafkaNotificationClientConfiguration {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
+    /**
+     * Create KafkaTemplate bean.
+     *
+     * @param kafkaAdminHelper KafkaAdminHelper bean
+     * @return new KafkaTemplate object.
+     */
     @Bean
-    public KafkaTemplate<String, Message> kafkaTemplate(KafkaAdminHelper kafkaAdminHelper) {
+    public KafkaTemplate<String, Message> kafkaTemplate(final KafkaAdminHelper kafkaAdminHelper) {
         kafkaAdminHelper.createOrUpdateTopic(kafkaTopic, kafkaPartitions, kafkaReplicas);
         return new KafkaTemplate<>(producerFactory());
     }
 
+    /**
+     * Create NotificationClient bean.
+     *
+     * @param kafkaTopic String name of Kafka topic
+     * @param kafkaTemplate KafkaTemplate bean
+     * @return new NotificationClient object.
+     */
     @Bean
-    public NotificationClient notificationClient(
-            @Value("${kafka.notification.topic.name}") String kafkaTopic,
-            KafkaTemplate<String, Message> kafkaTemplate) {
+    public NotificationClient notificationClient(@Value("${kafka.notification.topic.name}") final String kafkaTopic,
+                                                 final KafkaTemplate<String, Message> kafkaTemplate) {
         return new KafkaNotificationClient(kafkaTopic, kafkaTemplate);
     }
 
+    /**
+     * Create NotificationService bean.
+     *
+     * @param notificationClient NotificationClient bean
+     * @return new NotificationService object.
+     */
     @Bean
-    public NotificationService notificationService(NotificationClient notificationClient) {
+    public NotificationService notificationService(final NotificationClient notificationClient) {
         return new NotificationService(notificationClient);
     }
 

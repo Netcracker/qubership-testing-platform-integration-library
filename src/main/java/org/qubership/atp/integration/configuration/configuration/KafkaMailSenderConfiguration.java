@@ -43,25 +43,53 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 @ConditionalOnProperty(name = "kafka.mails.enable")
 public class KafkaMailSenderConfiguration {
 
+    /**
+     * Name of Kafka Topic.
+     */
     @Value("${kafka.mails.topic:ci_mails}")
     private String kafkaMailsTopic;
+
+    /**
+     * Number of Kafka Topic partitions.
+     */
     @Value("${kafka.mails.topic.partitions:1}")
     private int kafkaMailsPartitions;
+
+    /**
+     * Number of Kafka Topic replicas.
+     */
     @Value("${kafka.mails.topic.replicas:3}")
     private short kafkaMailsReplicas;
+
+    /**
+     * Maximum message size (in bytes).
+     */
     @Value("${kafka.mails.message.size:15728640}")
     public int messageSize;
+
+    /**
+     * Compression type.
+     */
     @Value("${kafka.mails.compression.type:lz4}")
     public String compressionType;
+
+    /**
+     * Kafka Producer Bootstrap Server URL.
+     */
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String kafkaServers;
+
+    /**
+     * Responses Group Id.
+     */
     @Value("${kafka.mails.responses.group.id}")
     private String groupId;
 
-
     /**
      * Create or update topic for mail request.
-     * @return NewTopic
+     *
+     * @return NewTopic configured with kafkaMailsTopic, kafkaMailsPartitions and kafkaMailsReplicas configuration
+     * settings.
      */
     @Bean
     public NewTopic mailsTopic() {
@@ -71,6 +99,11 @@ public class KafkaMailSenderConfiguration {
                 .build();
     }
 
+    /**
+     * Create new KafkaTemplate.
+     *
+     * @return new KafkaTemplate configured with producerConfig().
+     */
     @Bean
     public KafkaTemplate<UUID, MailRequest> kafkaTemplate() {
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerConfig()));
@@ -78,6 +111,7 @@ public class KafkaMailSenderConfiguration {
 
     /**
      * Create factory for KafkaListener for mail responses.
+     *
      * @return ConcurrentKafkaListenerContainerFactory
      */
     @Bean
@@ -88,7 +122,6 @@ public class KafkaMailSenderConfiguration {
                 new UUIDDeserializer(), new JsonDeserializer<>(KafkaMailResponse.class)));
         return factory;
     }
-
 
     private Map<String, Object> producerConfig() {
         Map<String, Object> props = new HashMap<>();

@@ -30,28 +30,51 @@ import brave.Tracer;
 @Configuration
 public class HttpInterceptorConfiguration implements WebMvcConfigurer {
 
+    /**
+     * Tracer bean.
+     */
     private final Tracer tracer;
+
+    /**
+     * HttpRequestParseHelper bean.
+     */
     private final HttpRequestParseHelper httpRequestParseHelper;
+
+    /**
+     * JwtParseHelper bean.
+     */
     private final JwtParseHelper jwtParseHelper;
+
+    /**
+     * String list of business IDs delimited with comma.
+     */
     private final String businessIds;
 
     /**
      * Create and configure mvc configuration.
+     *
+     * @param tracer Tracer bean
+     * @param httpRequestParseHelper HttpRequestParseHelper bean
+     * @param jwtParseHelper JwtParseHelper bean
+     * @param businessIds String list of business IDs delimited with comma.
      */
-    public HttpInterceptorConfiguration(@Autowired(required = false) Tracer tracer,
-                                        HttpRequestParseHelper httpRequestParseHelper,
-                                        JwtParseHelper jwtParseHelper,
-                                        @Qualifier("businessIdsString") String businessIds) {
+    public HttpInterceptorConfiguration(@Autowired(required = false) final Tracer tracer,
+                                        final HttpRequestParseHelper httpRequestParseHelper,
+                                        final JwtParseHelper jwtParseHelper,
+                                        @Qualifier("businessIdsString") final String businessIds) {
         this.httpRequestParseHelper = httpRequestParseHelper;
         this.jwtParseHelper = jwtParseHelper;
         this.tracer = tracer;
         this.businessIds = businessIds;
     }
 
+    /**
+     * Add interceptors to interceptor registry; only MdcContextHttpInterceptor is added currently.
+     *
+     * @param registry InterceptorRegistry
+     */
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new MdcContextHttpInterceptor(tracer,
-                jwtParseHelper,
-                businessIds));
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(new MdcContextHttpInterceptor(tracer, jwtParseHelper, businessIds));
     }
 }

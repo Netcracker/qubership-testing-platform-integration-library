@@ -26,6 +26,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
         url = "${atp.public.gateway.url:}")
 public interface PublicGatewayFeignClient {
 
+    /**
+     * Register AtpRoute in the public gateway.
+     *
+     * @param atpRoute AtpRoute object to register.
+     */
     @RequestMapping(method = RequestMethod.POST,
             value = "/register")
     void register(@RequestBody AtpRoute atpRoute);

@@ -27,13 +27,24 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "atp.notification.mode", havingValue = "none")
 public class NoneNotificationClientConfiguration {
 
+    /**
+     * Create notificationClient bean.
+     *
+     * @return new NoneNotificationClient object.
+     */
     @Bean
     public NotificationClient notificationClient() {
         return new NoneNotificationClient();
     }
 
+    /**
+     * Create notificationService bean.
+     *
+     * @param notificationClient NotificationClient bean
+     * @return new NotificationService object configured with notificationClient.
+     */
     @Bean
-    public NotificationService notificationService(NotificationClient notificationClient) {
+    public NotificationService notificationService(final NotificationClient notificationClient) {
         return new NotificationService(notificationClient);
     }
 

@@ -29,7 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Intercepts all feign client request and add 'X-Request-Id' header with value from {@link MDC} context.
- * See <a>https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-feign.html</a>.
+ * See <a href="https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-feign.html">
+ *     Multi Spring Cloud Feign Documentation</a>.
  *
  * @see MDC
  * @see org.springframework.cloud.openfeign.FeignClient
@@ -37,14 +38,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FeignClientMdcContextInterceptor implements RequestInterceptor {
 
+    /**
+     * List of String business IDs.
+     */
     private final List<String> businessIds;
 
-    public FeignClientMdcContextInterceptor(String businessIdsString) {
+    /**
+     * Constructor.
+     *
+     * @param businessIdsString String list of business IDs separated by comma.
+     */
+    public FeignClientMdcContextInterceptor(final String businessIdsString) {
         businessIds = MdcUtils.convertIdNamesToList(businessIdsString);
     }
 
+    /**
+     * Produce headers for all business IDs present in MDC.
+     *
+     * @param template RequestTemplate bean.
+     */
     @Override
-    public void apply(RequestTemplate template) {
+    public void apply(final RequestTemplate template) {
         if (!CollectionUtils.isEmpty(businessIds)) {
             businessIds.stream()
                     .filter(idName -> StringUtils.isNotBlank(MDC.get(idName)))
