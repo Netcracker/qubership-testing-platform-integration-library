@@ -28,17 +28,32 @@ import org.slf4j.MDC;
 
 public class MdcRestTemplateInterceptor implements HttpRequestInterceptor {
 
+    /**
+     * List of String business IDs.
+     */
     List<String> businessIds;
 
-    public MdcRestTemplateInterceptor(List<String> businessIds) {
+    /**
+     * Constructor.
+     *
+     * @param businessIds List of String business IDs.
+     */
+    public MdcRestTemplateInterceptor(final List<String> businessIds) {
         this.businessIds = businessIds;
     }
 
+    /**
+     * Process HttpRequest - add headers for all businessIds present in MDC.
+     *
+     * @param request HttpRequest to process
+     * @param context HttpContext object.
+     */
     @Override
-    public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+    public void process(final HttpRequest request, final HttpContext context) {
         businessIds.forEach(idName -> {
-            if (MDC.get(idName) != null) {
-                request.addHeader(MdcUtils.convertIdNameToHeader(idName), MDC.get(idName));
+            String value = MDC.get(idName);
+            if (value != null) {
+                request.addHeader(MdcUtils.convertIdNameToHeader(idName), value);
             }
         });
     }

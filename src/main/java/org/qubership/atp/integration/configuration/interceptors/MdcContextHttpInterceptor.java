@@ -47,24 +47,52 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MdcContextHttpInterceptor extends HandlerInterceptorAdapter {
 
+    /**
+     * Header Name for ZIPKIN_TRACE_ID values.
+     */
     private static final String ZIPKIN_TRACE_ID_HEADER_NAME = "Zipkin-Trace-Id";
+
+    /**
+     * Tracer bean.
+     */
     private final Tracer tracer;
+
+    /**
+     * JwtParseHelper bean.
+     */
     private final JwtParseHelper jwtParseHelper;
+
+    /**
+     * List of String business IDs.
+     */
     private final List<String> businessIds;
 
     /**
      * Create and configure request ids handler.
+     *
+     * @param tracer Tracer bean
+     * @param jwtParseHelper JwtParseHelper bean
+     * @param businessIdsString String with List of business IDs separated by comma.
      */
-    public MdcContextHttpInterceptor(Tracer tracer,
-                                     JwtParseHelper jwtParseHelper,
-                                     String businessIdsString) {
+    public MdcContextHttpInterceptor(final Tracer tracer,
+                                     final JwtParseHelper jwtParseHelper,
+                                     final String businessIdsString) {
         this.jwtParseHelper = jwtParseHelper;
         this.tracer = tracer;
         this.businessIds = MdcUtils.convertIdNamesToList(businessIdsString);
     }
 
+    /**
+     * Pre-Handle HttpServletResponse.
+     *
+     * @param request HttpServletRequest to process
+     * @param response HttpServletResponse to process
+     * @param handler Object handler
+     * @return Always returns true (successful processing).
+     */
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+    public boolean preHandle(final HttpServletRequest request,
+                             final HttpServletResponse response,
                              final Object handler) {
         processBusinessIds(request);
         Optional.ofNullable(tracer).map(Tracer::currentSpan)
@@ -77,9 +105,7 @@ public class MdcContextHttpInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-
-
-    private void processBusinessIds(HttpServletRequest request) {
+    private void processBusinessIds(final HttpServletRequest request) {
         if (!CollectionUtils.isEmpty(businessIds)) {
             for (String idName: businessIds) {
                 if (MDC.get(idName) == null) {
@@ -90,20 +116,37 @@ public class MdcContextHttpInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private void processPathVariables(HttpServletRequest request, String idName) {
+    private void processPathVariables(final HttpServletRequest request, final String idName) {
         Map<Object, Object> pathVariables =
                 (Map<Object, Object>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (pathVariables != null && pathVariables.get(idName.trim()) != null) {
-            MdcUtils.put(idName.trim(), (String) pathVariables.get(idName.trim()));
+        String name = idName.trim();
+        if (pathVariables != null) {
+            Object value = pathVariables.get(name);
+            if (value != null) {
+                MdcUtils.put(name, (String) value);
+            }
         }
     }
 
-    private void processRequestParameters(HttpServletRequest request, String idName) {
-        if (request.getParameterMap() != null && !StringUtils.isEmpty(request.getParameterMap().get(idName.trim()))) {
-            MdcUtils.put(idName.trim(), String.join(",", request.getParameterMap().get(idName.trim())));
+    private void processRequestParameters(final HttpServletRequest request, final String idName) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        String name = idName.trim();
+        if (parameterMap != null) {
+            String[] value = parameterMap.get(name);
+            if (!StringUtils.isEmpty(value)) {
+                MdcUtils.put(name, String.join(",", value));
+            }
         }
     }
 
+    /**
+     * After-Completion Handler (remove all businessIds from MDC).
+     *
+     * @param request HttpServletRequest to process
+     * @param response HttpServletResponse to process
+     * @param handler Object handler
+     * @param ex Exception possibly thrown during early processing.
+     */
     @Override
     public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
                                 final Object handler, final Exception ex) {

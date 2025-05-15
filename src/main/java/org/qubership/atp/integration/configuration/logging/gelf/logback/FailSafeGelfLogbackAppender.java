@@ -29,16 +29,50 @@ import lombok.Data;
 
 @Data
 public class FailSafeGelfLogbackAppender extends GelfLogbackAppender {
+
+    /**
+     * Log pattern.
+     */
     public static final String PATTERN
             = "%date{YYYY-MM-dd HH:mm:ss.SS} %-7([%level]) \"%thread\" %X{requestId} [%logger#%method] - %message%n";
 
+    /**
+     * Info message logged just before switching to console appender.
+     */
     public static final String INFO_MESSAGE = "Switching to fail safe console appender";
 
+    /**
+     * Error message in case Gelf message couldn't send.
+     */
+    private static final String ERROR_CANT_SEND_GELF_MESSAGE = "Could not send GELF message";
+
+    /**
+     * Error message in case invalid Gelf message.
+     */
+    private static final String ERROR_INVALID_GELF_MESSAGE = "GELF Message is invalid: ";
+
+    /**
+     * Maximum length of short message.
+     */
+    private static final short SHORT_MESSAGE_MAX_LENGTH = 250;
+
+    /**
+     * GrayLog server available (true) or not.
+     */
     private boolean graylogAvailable = true;
+
+    /**
+     * Console Appender.
+     */
     private ConsoleAppender<ILoggingEvent> consoleAppender;
 
+    /**
+     * Append event to log; synchronized.
+     *
+     * @param eventObject ILoggingEvent to add.
+     */
     @Override
-    public synchronized void doAppend(ILoggingEvent eventObject) {
+    public synchronized void doAppend(final ILoggingEvent eventObject) {
         if (!graylogAvailable) {
             consoleAppender.doAppend(eventObject);
             return;
@@ -46,8 +80,14 @@ public class FailSafeGelfLogbackAppender extends GelfLogbackAppender {
         super.doAppend(eventObject);
     }
 
+    /**
+     * Report error.
+     *
+     * @param message to report
+     * @param exception to report.
+     */
     @Override
-    public void reportError(String message, Exception exception) {
+    public void reportError(final String message, final Exception exception) {
         if (exception instanceof UnknownHostException) {
             graylogAvailable = false;
             addWarn(message, exception);
@@ -69,27 +109,35 @@ public class FailSafeGelfLogbackAppender extends GelfLogbackAppender {
         consoleAppender.start();
     }
 
+    /**
+     * Append event to log.
+     *
+     * @param event ILoggingEvent to append.
+     */
     @Override
-    protected void append(ILoggingEvent event) {
-        if (event != null) {
-            try {
-                GelfMessage message = this.createGelfMessage(event);
-                if (!message.isValid()) {
-                    this.reportError("GELF Message is invalid: " + message.toJson(), (Exception) null);
-                    return;
-                }
-
-                String fullMsgMasked = CryptoTools.maskEncryptedData(message.getFullMessage());
-                message.setFullMessage(fullMsgMasked);
-
-                String shortMessage = fullMsgMasked.length() > 250 ? fullMsgMasked.substring(0, 249) : fullMsgMasked;
-                message.setShortMessage(shortMessage);
-                if (null == this.gelfSender || !this.gelfSender.sendMessage(message)) {
-                    this.reportError("Could not send GELF message", (Exception) null);
-                }
-            } catch (Exception var3) {
-                this.reportError("Could not send GELF message: " + var3.getMessage(), var3);
+    protected void append(final ILoggingEvent event) {
+        if (event == null) {
+            return;
+        }
+        try {
+            GelfMessage message = this.createGelfMessage(event);
+            if (!message.isValid()) {
+                this.reportError(ERROR_INVALID_GELF_MESSAGE + message.toJson(), null);
+                return;
             }
+
+            String fullMsgMasked = CryptoTools.maskEncryptedData(message.getFullMessage());
+            message.setFullMessage(fullMsgMasked);
+
+            String shortMessage = fullMsgMasked.length() > SHORT_MESSAGE_MAX_LENGTH
+                    ? fullMsgMasked.substring(0, SHORT_MESSAGE_MAX_LENGTH - 1)
+                    : fullMsgMasked;
+            message.setShortMessage(shortMessage);
+            if (null == this.gelfSender || !this.gelfSender.sendMessage(message)) {
+                this.reportError(ERROR_CANT_SEND_GELF_MESSAGE, null);
+            }
+        } catch (Exception exception) {
+            this.reportError(ERROR_CANT_SEND_GELF_MESSAGE + exception.getMessage(), exception);
         }
     }
 }

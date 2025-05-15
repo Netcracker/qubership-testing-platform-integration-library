@@ -27,13 +27,34 @@ import biz.paluch.logging.gelf.log4j.GelfLogAppender;
 
 public class FailSafeGelfLogbackAppenderLog4j extends GelfLogAppender {
 
+    /**
+     * Log pattern.
+     */
     private static final String PATTERN = "%d{YYYY-MM-dd HH:mm:ss.SS} [%p] \"%t\" [%c#M] %m%n";
+
+    /**
+     * Info message logged just after successful configuring.
+     */
     private static final String INFO_MESSAGE = "Switching to fail safe console appender";
+
+    /**
+     * Root Logger.
+     */
     private Logger rootLogger = Logger.getRootLogger();
+
+    /**
+     * Console Appender.
+     */
     private ConsoleAppender consoleAppender;
 
+    /**
+     * Report error via Gelf Logback Appender; in case UnknownHostException log to console appender.
+     *
+     * @param message String message to report
+     * @param exception Exception to report.
+     */
    @Override
-    public void reportError(String message, Exception exception) {
+    public void reportError(final String message, final Exception exception) {
         if (exception instanceof UnknownHostException) {
             initFailSafeConsoleAppender();
         } else {
@@ -53,10 +74,14 @@ public class FailSafeGelfLogbackAppenderLog4j extends GelfLogAppender {
         rootLogger.info(INFO_MESSAGE);
     }
 
-    protected void append(LoggingEvent event) {
+    /**
+     * Append LoggingEvent to log.
+     *
+     * @param event LoggingEvent to append.
+     */
+    protected void append(final LoggingEvent event) {
         if (event != null) {
-            LoggingEvent maskedEvent = AtpLog4jPatternLayout.getMaskedLoggingEvent(event);
-            super.append(maskedEvent);
+            super.append(AtpLog4jPatternLayout.getMaskedLoggingEvent(event));
         }
     }
 }

@@ -28,17 +28,34 @@ import org.springframework.http.client.ClientHttpResponse;
 
 public class MdcClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
+    /**
+     * List of String business IDs.
+     */
     List<String> businessIds;
 
-    public MdcClientHttpRequestInterceptor(List<String> businessIds) {
+    /**
+     * Constructor.
+     *
+     * @param businessIds List of String business IDs.
+     */
+    public MdcClientHttpRequestInterceptor(final List<String> businessIds) {
         this.businessIds = businessIds;
     }
 
+    /**
+     * Http Request Interceptor.
+     *
+     * @param request HttpRequest to process
+     * @param body byte[] body to process
+     * @param execution functional
+     * @return ClientHttpResponse object
+     * @throws IOException in case execution exceptions.
+     */
     @NotNull
     @Override
-    public ClientHttpResponse intercept(@NotNull org.springframework.http.HttpRequest request,
-                                        @NotNull byte[] body,
-                                        ClientHttpRequestExecution execution) throws IOException {
+    public ClientHttpResponse intercept(@NotNull final org.springframework.http.HttpRequest request,
+                                        @NotNull final byte[] body,
+                                        final ClientHttpRequestExecution execution) throws IOException {
         businessIds.forEach(idName -> {
             if (MDC.get(idName) != null) {
                 request.getHeaders().add(MdcUtils.convertIdNameToHeader(idName), MDC.get(idName));

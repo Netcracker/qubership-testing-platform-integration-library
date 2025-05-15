@@ -36,26 +36,48 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MdcChannelInterceptor implements ChannelInterceptor {
 
+    /**
+     * StompHelper bean.
+     */
     private final StompHelper bearerTokenStompHelper;
+
+    /**
+     * JwtParseHelper bean.
+     */
     private final JwtParseHelper jwtParseHelper;
+
+    /**
+     * List of String business IDs.
+     */
     private final List<String> businessIds;
 
     /**
      * Create and configure message handler.
+     *
+     * @param bearerTokenStompHelper StompHelper bean
+     * @param parseHelper JwtParseHelper bean
+     * @param businessIdsString String with List of business IDs separated by comma.
      */
-    public MdcChannelInterceptor(StompHelper bearerTokenStompHelper, JwtParseHelper parseHelper,
-                                 String businessIdsString) {
+    public MdcChannelInterceptor(final StompHelper bearerTokenStompHelper,
+                                 final JwtParseHelper parseHelper,
+                                 final String businessIdsString) {
         this.bearerTokenStompHelper = bearerTokenStompHelper;
         this.jwtParseHelper = parseHelper;
         this.businessIds = MdcUtils.convertIdNamesToList(businessIdsString);
     }
 
+    /**
+     * Pre-Send Message Handler.
+     *
+     * @param message Message to be processed
+     * @param channel MessageChannel to send message to
+     * @return message processed.
+     */
     @Override
-    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+    public Message<?> preSend(final Message<?> message, final MessageChannel channel) {
         try {
             MDC.clear();
-            StompHeaderAccessor accessor = (StompHeaderAccessor) MessageHeaderAccessor.getAccessor(message,
-                    StompHeaderAccessor.class);
+            StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
             if (accessor != null) {
                 String token = this.bearerTokenStompHelper.extractBearerToken(accessor);
                 if (token != null && StringUtils.startsWithIgnoreCase(token, "Bearer ")) {
@@ -75,11 +97,12 @@ public class MdcChannelInterceptor implements ChannelInterceptor {
         return message;
     }
 
-    private void processHeaders(StompHeaderAccessor accessor) {
+    private void processHeaders(final StompHeaderAccessor accessor) {
         if (!CollectionUtils.isEmpty(businessIds)) {
             businessIds.forEach(idName -> {
-                if (accessor.getFirstNativeHeader(MdcUtils.convertIdNameToHeader(idName)) != null) {
-                    MdcUtils.put(idName.trim(), accessor.getFirstNativeHeader(MdcUtils.convertIdNameToHeader(idName)));
+                String header = accessor.getFirstNativeHeader(MdcUtils.convertIdNameToHeader(idName));
+                if (header != null) {
+                    MdcUtils.put(idName.trim(), header);
                 }
             });
         }
