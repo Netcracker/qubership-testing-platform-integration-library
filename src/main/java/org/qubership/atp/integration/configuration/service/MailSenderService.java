@@ -42,12 +42,30 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MailSenderService {
 
+    /**
+     * Kafka Template.
+     */
     private final KafkaTemplate<UUID, MailRequest> kafkaTemplate;
+
+    /**
+     * Mail Sender Feign Client to use for sending via REST.
+     */
     private final MailSenderFeignClient mailSenderFeignClient;
+
+    /**
+     * Object Mapper.
+     */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Topic name.
+     */
     @Value("${kafka.mails.topic:ci_mails}")
     private String mailRequestTopic;
+
+    /**
+     * Service name.
+     */
     @Value("${spring.application.name}")
     private String serviceName;
 
@@ -56,9 +74,9 @@ public class MailSenderService {
      * Sends mail via kafka, if possible, or via rest.
      *
      * @param mail mail request parameters
-     * @return result of sending mail
+     * @return result of sending mail.
      */
-    public MailResponse send(MailRequest mail) {
+    public MailResponse send(final MailRequest mail) {
         if (StringUtils.isEmpty(mail.getService())) {
             mail.setService(serviceName);
         }
@@ -73,9 +91,9 @@ public class MailSenderService {
      *
      * @param mail mail request parameters
      * @param attachments attached non-inline files
-     * @return result of sending mail
+     * @return result of sending mail.
      */
-    public MailResponse send(MailRequest mail, List<MultipartFile> attachments) {
+    public MailResponse send(final MailRequest mail, final List<MultipartFile> attachments) {
         if (StringUtils.isEmpty(mail.getService())) {
             mail.setService(serviceName);
         }
@@ -88,9 +106,11 @@ public class MailSenderService {
      * @param mail mail request parameters
      * @param attachments attached non-inlines files
      * @param inlines attached inlines files
-     * @return result of sending mail
+     * @return result of sending mail.
      */
-    public MailResponse send(MailRequest mail, List<MultipartFile> attachments, List<MultipartFile> inlines) {
+    public MailResponse send(final MailRequest mail,
+                             final List<MultipartFile> attachments,
+                             final List<MultipartFile> inlines) {
         if (StringUtils.isEmpty(mail.getService())) {
             mail.setService(serviceName);
         }
@@ -102,9 +122,9 @@ public class MailSenderService {
      *
      * @param mail mail request parameters
      * @param inlines attachment inline files
-     * @return result of sending mail
+     * @return result of sending mail.
      */
-    public MailResponse sendWithInline(MailRequest mail, List<MultipartFile> inlines) {
+    public MailResponse sendWithInline(final MailRequest mail, final List<MultipartFile> inlines) {
         if (StringUtils.isEmpty(mail.getService())) {
             mail.setService(serviceName);
         }
@@ -115,9 +135,9 @@ public class MailSenderService {
      * Sends mail via rest.
      *
      * @param mail mail request parameters
-     * @return result of sending mail
+     * @return result of sending mail.
      */
-    private MailResponse sendViaRest(MailRequest mail) {
+    private MailResponse sendViaRest(final MailRequest mail) {
         MailResponse mailResponse = new MailResponse();
         try {
             ResponseEntity response = mailSenderFeignClient.send(mail);
@@ -136,9 +156,11 @@ public class MailSenderService {
      * @param mail mail request parameters
      * @param attachments attached non-inline files
      * @param inlines attached inline files
-     * @return result of sending mail
+     * @return result of sending mail.
      */
-    private MailResponse sendViaRest(MailRequest mail, List<MultipartFile> attachments, List<MultipartFile> inlines) {
+    private MailResponse sendViaRest(final MailRequest mail,
+                                     final List<MultipartFile> attachments,
+                                     final List<MultipartFile> inlines) {
         MailResponse mailResponse = new MailResponse();
         try {
             ResponseEntity response = mailSenderFeignClient.sendWithAttachment(
@@ -152,7 +174,7 @@ public class MailSenderService {
         return mailResponse;
     }
 
-    private MailResponse getMailResponse(Exception ex) {
+    private MailResponse getMailResponse(final Exception ex) {
         MailResponse mailResponse = new MailResponse();
         String errorMessage = ex.toString();
         String errorMessageBody = errorMessage.substring(errorMessage.indexOf("{"));
@@ -174,9 +196,9 @@ public class MailSenderService {
      * Sends mail via kafka.
      *
      * @param mail mail request parameters
-     * @return result of sending request to kafka. If you want to get the result of an email, you need a KafkaListener
+     * @return result of sending request to kafka. If you want to get the result of an email, you need a KafkaListener.
      */
-    private MailResponse sendViaKafka(MailRequest mail) {
+    private MailResponse sendViaKafka(final MailRequest mail) {
         MailResponse response = new MailResponse();
         response.setTimestamp(new Date());
         try {

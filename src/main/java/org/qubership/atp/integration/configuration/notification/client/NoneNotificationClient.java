@@ -22,8 +22,22 @@ import org.qubership.atp.integration.configuration.model.notification.Notificati
 
 public class NoneNotificationClient implements NotificationClient {
 
-    public void sendNotification(Notification notification){}
+    /**
+     * Sends notification to kafka. Actually doesn't send, according to 'None' in the class name.
+     *
+     * @param notification Notification to be sent.
+     */
+    public void sendNotification(final Notification notification) {
 
-    public void sendNotifications(List<Notification> notifications){}
+    }
+
+    /**
+     * Sends notifications to kafka. Actually doesn't send, according to 'None' in the class name.
+     *
+     * @param notifications List of Notifications to be sent.
+     */
+    public void sendNotifications(final List<Notification> notifications) {
+
+    }
 
 }

@@ -16,10 +16,8 @@
 
 package org.qubership.atp.integration.configuration.interceptors;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.protocol.HttpContext;

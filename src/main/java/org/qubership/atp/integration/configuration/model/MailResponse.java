@@ -22,9 +22,29 @@ import lombok.Data;
 
 @Data
 public class MailResponse {
+
+    /**
+     * Response status.
+     */
     private int status;
+
+    /**
+     * Response path.
+     */
     private String path;
+
+    /**
+     * Response timestamp.
+     */
     private Date timestamp;
+
+    /**
+     * Response message.
+     */
     private String message;
+
+    /**
+     * Stacktrace in case exception was faced and included into Response.
+     */
     private String trace;
 }

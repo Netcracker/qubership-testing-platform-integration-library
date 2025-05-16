@@ -21,6 +21,14 @@ import lombok.NonNull;
 
 @Data
 public class Message {
-    NotificationSchema schema = new NotificationSchema();
-    @NonNull Notification payload;
+
+    /**
+     * Notification Schema.
+     */
+    private NotificationSchema schema = new NotificationSchema();
+
+    /**
+     * Notification message.
+     */
+    @NonNull private Notification payload;
 }

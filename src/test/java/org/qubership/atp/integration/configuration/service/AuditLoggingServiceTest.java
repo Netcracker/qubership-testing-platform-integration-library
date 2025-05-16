@@ -60,46 +60,93 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 })
 public class AuditLoggingServiceTest {
 
+    /**
+     * AuditLoggingService bean.
+     */
     @Autowired
     private AuditLoggingService auditLoggingService;
 
+    /**
+     * JwtParseHelper bean.
+     */
     @Autowired
     private JwtParseHelper jwtParseHelper;
 
+    /**
+     * HttpRequestParseHelper bean.
+     */
     @Autowired
     private HttpRequestParseHelper httpRequestParseHelper;
 
+    /**
+     * KafkaProducer bean.
+     */
     @MockBean
     private KafkaProducer<UUID, AuditLoggingMessage> kafkaProducer;
 
+    /**
+     * KafkaAdminHelper bean.
+     */
     @MockBean
     private KafkaAdminHelper kafkaAdminHelper;
 
+    /**
+     * ArgumentCaptor bean.
+     */
     @Captor
     private ArgumentCaptor<ProducerRecord<UUID, AuditLoggingMessage>> recordCaptor;
 
+    /**
+     * Name of service.
+     */
     public static final String TEST_SERVICE = "RAM";
+
+    /**
+     * UUID of session.
+     */
     private static final String TEST_SESSION_ID = "8085b7d3-9472-470a-b914-d70071d2b072";
+
+    /**
+     * URL of some project resource.
+     */
     private static final String TEST_URL = "/catalog/api/v1/projects/ea2be7c4-b9f2-4d63-a4b1-5d94075fcc9f/testplans";
+
+    /**
+     * UUID of some project.
+     */
     private static final String TEST_PROJECT_ID = "ea2be7c4-b9f2-4d63-a4b1-5d94075fcc9f";
+
+    /**
+     * Some username.
+     */
     private static final String TEST_USERNAME = "Admin Adminovich";
+
+    /**
+     * UUID of the user.
+     */
     private static final String TEST_USER_ID = "c2344d70-3707-4418-a9c9-dbdb8beca796";
 
-    private static final String TEST_AUTH_HEADER = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5TWVzOD" +
-            "NZai05clhfZUItYWZuUWdPRzhDZUFhblFTakJZTS0wNjQxdVdVIn0.eyJqdGkiOiI1OTRmMzY0My1hODhmLTQ3MTQtYTM2NS1jYWJiZj" +
-            "Y1MmY5MWYiLCJleHAiOjE2NjIzNzk3NzIsIm5iZiI6MCwiaWF0IjoxNjYyMzc2MTcyLCJpc3MiOiJodHRwczovL2F0cC1rZXljbG9hay" +
-            "1kZXYyMjIuZGV2LWF0cC1jbG91ZC5uZXRjcmFja2VyLmNvbS9hdXRoL3JlYWxtcy9hdHAyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Im" +
-            "MyMzQ0ZDcwLTM3MDctNDQxOC1hOWM5LWRiZGI4YmVjYTc5NiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZyb250ZW5kIiwiYXV0aF90aW" +
-            "1lIjowLCJzZXNzaW9uX3N0YXRlIjoiODA4NWI3ZDMtOTQ3Mi00NzBhLWI5MTQtZDcwMDcxZDJiMDcyIiwiYWNyIjoiMSIsImFsbG93ZW" +
-            "Qtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIkFUUF9BRE1JTiIsInVtYV9hdX" +
-            "Rob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS" +
-            "1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbH" +
-            "NlLCJuYW1lIjoiQWRtaW4gQWRtaW5vdmljaCIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIi" +
-            "wiZmFtaWx5X25hbWUiOiJBZG1pbm92aWNoIiwiZW1haWwiOiJ0ZXN0Nzc3QHRlc3QifQ.FKCnW9ae-Hza28NJdUVJKud26nHzz7mw9P2" +
-            "O7Pec6GKcbs0nPY6Aabb4CvFL70MbXyOtvK-ErihOAJd__DM_dT0nNbPNA4CIP9rod3ylSVjSAxfw1FFh1lSnNwoZjs4K3JOFqmwnJN2" +
-            "0ROuCYMo3EcJpFzZA2dt2GQEpj29N4Qk6a-dx3IG6Jz0T0LqEN1bjsd3EeiRXqm83wsYi3nkmPx4Yz538Op4QfS2UxDUriUQNaU9vXyo" +
-            "FRNawE09X6C56Y3gTqytG2JDUZhKYcoY87sbERRVtJFVLrJxiGiGvrest92ATNrEVz2tI13y4SbiuaQAx0BOT5T4Iz9gAm_FkKg";
+    /**
+     * Valid Bearer Token.
+     */
+    private static final String TEST_AUTH_HEADER = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5TWVzOD"
+            + "NZai05clhfZUItYWZuUWdPRzhDZUFhblFTakJZTS0wNjQxdVdVIn0.eyJqdGkiOiI1OTRmMzY0My1hODhmLTQ3MTQtYTM2NS1jYWJiZj"
+            + "Y1MmY5MWYiLCJleHAiOjE2NjIzNzk3NzIsIm5iZiI6MCwiaWF0IjoxNjYyMzc2MTcyLCJpc3MiOiJodHRwczovL2F0cC1rZXljbG9hay"
+            + "1kZXYyMjIuZGV2LWF0cC1jbG91ZC5uZXRjcmFja2VyLmNvbS9hdXRoL3JlYWxtcy9hdHAyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Im"
+            + "MyMzQ0ZDcwLTM3MDctNDQxOC1hOWM5LWRiZGI4YmVjYTc5NiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZyb250ZW5kIiwiYXV0aF90aW"
+            + "1lIjowLCJzZXNzaW9uX3N0YXRlIjoiODA4NWI3ZDMtOTQ3Mi00NzBhLWI5MTQtZDcwMDcxZDJiMDcyIiwiYWNyIjoiMSIsImFsbG93ZW"
+            + "Qtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIkFUUF9BRE1JTiIsInVtYV9hdX"
+            + "Rob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS"
+            + "1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbH"
+            + "NlLCJuYW1lIjoiQWRtaW4gQWRtaW5vdmljaCIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIi"
+            + "wiZmFtaWx5X25hbWUiOiJBZG1pbm92aWNoIiwiZW1haWwiOiJ0ZXN0Nzc3QHRlc3QifQ.FKCnW9ae-Hza28NJdUVJKud26nHzz7mw9P2"
+            + "O7Pec6GKcbs0nPY6Aabb4CvFL70MbXyOtvK-ErihOAJd__DM_dT0nNbPNA4CIP9rod3ylSVjSAxfw1FFh1lSnNwoZjs4K3JOFqmwnJN2"
+            + "0ROuCYMo3EcJpFzZA2dt2GQEpj29N4Qk6a-dx3IG6Jz0T0LqEN1bjsd3EeiRXqm83wsYi3nkmPx4Yz538Op4QfS2UxDUriUQNaU9vXyo"
+            + "FRNawE09X6C56Y3gTqytG2JDUZhKYcoY87sbERRVtJFVLrJxiGiGvrest92ATNrEVz2tI13y4SbiuaQAx0BOT5T4Iz9gAm_FkKg";
 
+    /**
+     * Test of request logging.
+     */
     @Test
     public void logRequestTest() {
         MockHttpServletRequest request = new MockHttpServletRequest();

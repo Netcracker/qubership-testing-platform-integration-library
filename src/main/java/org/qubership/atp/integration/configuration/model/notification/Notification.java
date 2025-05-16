@@ -25,18 +25,51 @@ import lombok.Data;
 public class Notification {
 
     public enum Type {
+
+        /**
+         * No notification.
+         */
         NONE("none"),
+
+        /**
+         * Info type (~level) of notification.
+         */
         INFO("info"),
+
+        /**
+         * Warning type (~level) of notification.
+         */
         WARNING("warn"),
+
+        /**
+         * Error type (~level) of notification.
+         */
         ERROR("error"),
+
+        /**
+         * Success type of notification.
+         */
         SUCCESS("success");
 
-        private String type;
+        /**
+         * Type name.
+         */
+        private final String type;
 
-        Type(String type) {
+        /**
+         * Constructor.
+         *
+         * @param type String type name.
+         */
+        Type(final String type) {
             this.type = type;
         }
 
+        /**
+         * Make String representation.
+         *
+         * @return String representation.
+         */
         @Override
         @JsonValue
         public String toString() {
@@ -44,8 +77,19 @@ public class Notification {
         }
     }
 
+    /**
+     * Notification message.
+     */
     private String message;
+
+    /**
+     * Notification type.
+     */
     private Type type;
+
+    /**
+     * UUID of the User to be notified.
+     */
     private UUID userId;
 
     /**
@@ -55,7 +99,7 @@ public class Notification {
      * @param type type of notification
      * @param userId the user id for which this notification is intended
      */
-    public Notification(String message, Type type, UUID userId) {
+    public Notification(final String message, final Type type, final UUID userId) {
         this.message = message;
         this.type = type;
         this.userId = userId;
@@ -68,7 +112,7 @@ public class Notification {
      * @param message notification message
      * @param userId the user id for which this notification is intended
      */
-    public Notification(String message, UUID userId) {
+    public Notification(final String message, final UUID userId) {
         this.message = message;
         type = Type.NONE;
         this.userId = userId;

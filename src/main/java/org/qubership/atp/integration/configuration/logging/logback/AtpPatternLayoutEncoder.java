@@ -21,6 +21,9 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
 public class AtpPatternLayoutEncoder extends PatternLayoutEncoder {
 
+    /**
+     * Create, configure and start PatternLayout; then start super PatternLayoutEncoder.
+     */
     @Override
     public void start() {
         PatternLayout patternLayout = new PatternLayout();

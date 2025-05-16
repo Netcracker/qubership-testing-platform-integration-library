@@ -22,11 +22,39 @@ import lombok.Data;
 
 @Data
 public class MailRequest {
+
+    /**
+     * Service name.
+     */
     private String service;
+
+    /**
+     * Metadata map.
+     */
     private Map<String, Object> metadata;
+
+    /**
+     * Email address of sender.
+     */
     private String from;
+
+    /**
+     * Email address(-es) of receiver(s).
+     */
     private String to;
+
+    /**
+     * Email address(-es) of 'CC'-receiver(s).
+     */
     private String cc;
+
+    /**
+     * Email subject.
+     */
     private String subject;
+
+    /**
+     * Email body.
+     */
     private String content;
 }

@@ -16,7 +16,7 @@
 
 package org.qubership.atp.integration.configuration.notification.client;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.qubership.atp.integration.configuration.feign.NotificationFeignClient;
@@ -29,33 +29,41 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RestNotificationClient implements NotificationClient {
 
+    /**
+     * Error Message logged in case sending message exceptions.
+     */
+    private static final String ERROR_MESSAGE = "Sending of notification message to atp-notification is failed";
+
+    /**
+     * Notification Feign Client.
+     */
     private final NotificationFeignClient notificationFeignClient;
 
     /**
      * Sends the notification to atp-notification via REST.
      *
-     * @param notification notification that need to send
+     * @param notification notification to be sent.
      */
-    public void sendNotification(Notification notification) {
+    public void sendNotification(final Notification notification) {
         try {
-            log.info("Send notifications via REST");
-            notificationFeignClient.sendNotifications(Arrays.asList(notification));
+            log.info("Send notification via REST");
+            notificationFeignClient.sendNotifications(Collections.singletonList(notification));
         } catch (Exception e) {
-            log.error("Send notification message to atp-notification failed", e);
+            log.error(ERROR_MESSAGE, e);
         }
     }
 
     /**
      * Sends the list of notifications to atp-notification via REST.
      *
-     * @param notifications list of notifications that need to send
+     * @param notifications list of notifications to be sent.
      */
-    public void sendNotifications(List<Notification> notifications) {
+    public void sendNotifications(final List<Notification> notifications) {
         try {
-            log.info("Send notifications. Count:{}", notifications.size());
+            log.info("Send notifications via REST. Count: {}", notifications.size());
             notificationFeignClient.sendNotifications(notifications);
         } catch (Exception e) {
-            log.error("Send notification message to atp-notification failed", e);
+            log.error(ERROR_MESSAGE, e);
         }
     }
 

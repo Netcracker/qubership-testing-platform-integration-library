@@ -45,20 +45,42 @@ import org.springframework.web.context.WebApplicationContext;
 @AutoConfigureMockMvc
 public class RouteInfoControllerTest {
 
+    /**
+     * MockMvc object.
+     */
     private MockMvc mvc;
+
+    /**
+     * WebApplicationContext bean.
+     */
     @Autowired
     WebApplicationContext webApplicationContext;
 
+    /**
+     * RouteRegisterComponent mockBean.
+     */
     @MockBean
     RouteRegisterComponent routeRegisterComponent;
+
+    /**
+     * AuditLoggingService mockBean.
+     */
     @MockBean
     AuditLoggingService auditLoggingService;
 
+    /**
+     * Setup webApplicationContext before test.
+     */
     @Before
     public void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
+    /**
+     * Test of RouteInfo getting.
+     *
+     * @throws Exception in case errors faced.
+     */
     @Test
     public void getRouteInfoTest() throws Exception {
         String uri = "/atp-integration/routeInfo";

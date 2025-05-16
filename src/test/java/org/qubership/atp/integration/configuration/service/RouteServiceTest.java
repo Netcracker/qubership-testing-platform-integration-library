@@ -32,12 +32,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @AutoConfigureMockMvc
 public class RouteServiceTest {
 
+    /**
+     * RouteService bean.
+     */
     @Autowired
-    RouteService routeService;
+    private RouteService routeService;
 
+    /**
+     * RouteRegisterComponent bean.
+     */
     @MockBean
-    RouteRegisterComponent routeRegisterComponent;
+    private RouteRegisterComponent routeRegisterComponent;
 
+    /**
+     * Test of Route Info getting.
+     */
     @Test
     public void getRouteShouldReturnRouteInfo() {
         AtpRoute route = routeService.getRoute();

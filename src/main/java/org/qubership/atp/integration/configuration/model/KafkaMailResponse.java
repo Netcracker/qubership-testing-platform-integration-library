@@ -22,10 +22,30 @@ import lombok.Data;
 
 @Data
 public class KafkaMailResponse {
+
+    /**
+     * Service name.
+     */
     private String service;
+
+    /**
+     * Metadata map.
+     */
     private Map<String, Object> metadata;
+
+    /**
+     * Response Status (Success or Error).
+     */
     private KafkaMailResponseStatus status;
+
+    /**
+     * Response message.
+     */
     private String message;
+
+    /**
+     * Stacktrace in case exception was faced.
+     */
     private String stacktrace;
 }
 

@@ -16,69 +16,46 @@
 
 package org.qubership.atp.integration.configuration.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class AtpRoute {
+
+    /**
+     * Service id to use in registry.
+     */
     private String serviceId;
+
+    /**
+     * Port number.
+     */
     private int port;
+
+    /**
+     * Prefix path to route.
+     */
     private String path;
+
+    /**
+     * Is the route public or not? (Should it be registered in public gateway or not?)
+     */
     private boolean isPublic;
+
+    /**
+     * Is the route internal or not? (Should it be registered in internal gateway or not?)
+     */
     private boolean isInternal;
+
+    /**
+     * Context path.
+     */
     private String contextPath;
+
+    /**
+     * URL of the route.
+     */
     private String url;
 
-    public String getServiceId() {
-        return serviceId;
-    }
-
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public boolean isPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(boolean isPublic) {
-        this.isPublic = isPublic;
-    }
-
-    public boolean isInternal() {
-        return isInternal;
-    }
-
-    public void setInternal(boolean isInternal) {
-        this.isInternal = isInternal;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getContextPath() {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 }
-

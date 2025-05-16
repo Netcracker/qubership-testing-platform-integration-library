@@ -29,33 +29,67 @@ import ch.qos.logback.classic.LoggerContext;
 
 public class FailSafeGelfLogbackAppenderTest {
 
+    /**
+     * Fail Safe Gelf Logback Appender configured with unknown Host.
+     */
     private FailSafeGelfLogbackAppender failSafeGelfLogbackAppenderHostUnknown;
 
+    /**
+     * Logger with correct configuration.
+     */
     private static org.slf4j.Logger log = LoggerFactory.getLogger(FailSafeGelfLogbackAppenderTest.class);
-    private static final String LOGGER_NAME = "org.qubership.junit.log";
-    private static final Logger logger = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
 
+    /**
+     * Logger name.
+     */
+    private static final String LOGGER_NAME = "org.qubership.junit.log";
+
+    /**
+     * Logger configured with wrong configured appender.
+     */
+    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(LOGGER_NAME);
+
+    /**
+     * Test message to log.
+     */
     private static final String MSG = "Test message";
+
+    /**
+     * Incorrect host error string.
+     */
     private static final String INCORRECT_HOST = "incorrect_host";
+
+    /**
+     * Warning message.
+     */
     private static final String WARNING_MESSAGE_INCORRECT_HOST = "Unknown GELF server hostname:" + INCORRECT_HOST;
 
+    /**
+     * Configure and add appender, then start it before tests.
+     */
     @Before
     public void setup() {
         failSafeGelfLogbackAppenderHostUnknown = new FailSafeGelfLogbackAppender();
         failSafeGelfLogbackAppenderHostUnknown.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         failSafeGelfLogbackAppenderHostUnknown.setHost(INCORRECT_HOST);
-        logger.addAppender(failSafeGelfLogbackAppenderHostUnknown);
+        LOGGER.addAppender(failSafeGelfLogbackAppenderHostUnknown);
         failSafeGelfLogbackAppenderHostUnknown.start();
     }
 
+    /**
+     * Stop and detach appender after tests.
+     */
     @After
     public void cleanUp() {
         failSafeGelfLogbackAppenderHostUnknown.stop();
-        logger.detachAppender(failSafeGelfLogbackAppenderHostUnknown);
+        LOGGER.detachAppender(failSafeGelfLogbackAppenderHostUnknown);
     }
 
+    /**
+     * Test of Console appender creation in case Host is incorrect.
+     */
     @Test
-    public void generateLogsWithAppender_HostIncorrect_ExpectCreatingConsoleAppender() {
+    public void generateLogsWithAppenderHostIncorrectExpectCreatingConsoleAppender() {
         generateLogs(MSG);
 
         Assert.assertFalse(failSafeGelfLogbackAppenderHostUnknown.isGraylogAvailable());
@@ -74,7 +108,7 @@ public class FailSafeGelfLogbackAppenderTest {
         Assert.assertNotNull(failSafeGelfLogbackAppenderHostUnknown.getConsoleAppender());
     }
 
-    private void generateLogs(String message){
+    private void generateLogs(final String message) {
         log.info(message);
     }
 

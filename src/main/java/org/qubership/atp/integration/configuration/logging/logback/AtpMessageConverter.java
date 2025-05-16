@@ -23,10 +23,19 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class AtpMessageConverter extends ClassicConverter {
 
+    /**
+     * Constructor.
+     */
     public AtpMessageConverter() {
     }
 
-    public String convert(ILoggingEvent event) {
+    /**
+     * Get formatted message, then mask encrypted data. Return resulting String.
+     *
+     * @param event LoggingEvent to convert
+     * @return String containing converted event.
+     */
+    public String convert(final ILoggingEvent event) {
         return CryptoTools.maskEncryptedData(event.getFormattedMessage());
     }
 }

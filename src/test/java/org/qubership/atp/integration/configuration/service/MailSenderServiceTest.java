@@ -45,13 +45,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(SpringRunner.class)
 public class MailSenderServiceTest {
 
+    /**
+     * MailSenderFeignClient bean.
+     */
     @MockBean
     private MailSenderFeignClient mailSenderFeignClient;
+
+    /**
+     * KafkaTemplate bean.
+     */
     @MockBean
     private KafkaTemplate<UUID, MailRequest> kafkaTemplate;
+
+    /**
+     * MailSenderService bean.
+     */
     @Autowired
     private MailSenderService mailSenderService;
 
+    /**
+     * Test sending mail.
+     */
     @Test
     public void sendMail() {
         MailRequest request = new MailRequest();
@@ -76,6 +90,11 @@ public class MailSenderServiceTest {
         Mockito.verify(kafkaTemplate).send("ci_mails", request);
     }
 
+    /**
+     * Test sending mail with attachments.
+     *
+     * @throws JsonProcessingException in case ObjectMapper exceptions.
+     */
     @Test
     public void sendMailWithNonInlineAttachment() throws JsonProcessingException {
         MailRequest request = new MailRequest();
@@ -90,6 +109,11 @@ public class MailSenderServiceTest {
                 .sendWithAttachment(mapper.writeValueAsString(request), attachments, null);
     }
 
+    /**
+     * Test sending mail with attachments and inline attachments.
+     *
+     * @throws JsonProcessingException in case ObjectMapper exceptions.
+     */
     @Test
     public void sendMailWithNonInlineAndInlineAttachment() throws JsonProcessingException {
         MailRequest request = new MailRequest();

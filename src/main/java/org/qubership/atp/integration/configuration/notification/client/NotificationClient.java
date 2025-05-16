@@ -24,8 +24,18 @@ import org.springframework.stereotype.Component;
 @Component
 public interface NotificationClient {
 
-    void sendNotification(Notification notification);
+    /**
+     * Send the notification to kafka.
+     *
+     * @param notification notification to be sent.
+     */
+    void sendNotification(final Notification notification);
 
-    void sendNotifications(List<Notification> notifications);
+    /**
+     * Send notifications to kafka.
+     *
+     * @param notifications List of notifications to be sent.
+     */
+    void sendNotifications(final List<Notification> notifications);
 
 }

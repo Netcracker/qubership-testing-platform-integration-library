@@ -27,7 +27,13 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAtpNotification
 @EnableAspectJAutoProxy
 public class TestApplication {
-    public static void main(String[] args) {
+
+    /**
+     * Main method of test application.
+     *
+     * @param args String[] arguments.
+     */
+    public static void main(final String[] args) {
         SpringApplication.run(TestApplication.class, args);
     }
 }

@@ -17,12 +17,28 @@
 package org.qubership.atp.integration.configuration.model;
 
 public enum KafkaMailResponseStatus {
+
+    /**
+     * Success status.
+     */
     SUCCESS("SUCCESS"),
+
+    /**
+     * Error status.
+     */
     ERROR("ERROR");
 
-    private String status;
+    /**
+     * String status name.
+     */
+    private final String status;
 
-    KafkaMailResponseStatus(String status) {
+    /**
+     * Constructor.
+     *
+     * @param status String status name.
+     */
+    KafkaMailResponseStatus(final String status) {
         this.status = status;
     }
 }

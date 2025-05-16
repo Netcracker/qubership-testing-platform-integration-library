@@ -42,30 +42,52 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuditLoggingService {
 
+    /**
+     * Name of header containing project id.
+     */
     public static final String PROJECT_ID_HEADER_NAME = "X-Project-Id";
 
+    /**
+     * Service Name.
+     */
     @Value("${spring.application.name}")
     private String serviceName;
 
+    /**
+     * Audit Logging Topic Name.
+     */
     @Value("${atp.audit.logging.topic.name}")
     private String topic;
 
+    /**
+     * Producer bean.
+     */
     private final Producer<UUID, AuditLoggingMessage> auditLoggingKafkaProducer;
+
+    /**
+     * JwtParseHelper bean.
+     */
     private final JwtParseHelper jwtParseHelper;
+
+    /**
+     * HttpRequestParseHelper bean.
+     */
     private final HttpRequestParseHelper httpRequestParseHelper;
 
     /**
-     * Logging request.
+     * Logging of request.
+     *
+     * @param request HttpServletRequest to process
+     * @param response HttpServletResponse to process.
      */
-    public void loggingRequest(HttpServletRequest request, HttpServletResponse response) {
-
+    public void loggingRequest(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Trying to log request");
         try {
-            final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
             final String url = request.getRequestURI();
             final UUID id = UUID.randomUUID();
-            final UUID sessionId = jwtParseHelper.getSessionIdFromToken(authToken);
             final UUID projectId = httpRequestParseHelper.getRequestUuidHeader(request, PROJECT_ID_HEADER_NAME, false);
+            final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+            final UUID sessionId = jwtParseHelper.getSessionIdFromToken(authToken);
             final String username = jwtParseHelper.getUsernameFromToken(authToken);
             final UUID userId = jwtParseHelper.getUserIdFromToken(authToken);
             final Timestamp startDate = new Timestamp(System.currentTimeMillis());
@@ -74,8 +96,12 @@ public class AuditLoggingService {
             final String ipAddress = request.getRemoteAddr();
             final String userAgent = httpRequestParseHelper.getBrowserAgent(request.getHeader("User-Agent"));
             final int httpStatusCode = response.getStatus();
-            Map<String, String> mdcMap =
-                    MDC.getCopyOfContextMap() == null ? new HashMap<>() : MDC.getCopyOfContextMap();
+
+            Map<String, String> mdcMap = MDC.getCopyOfContextMap();
+            if (mdcMap == null) {
+                mdcMap = new HashMap<>();
+            }
+
             AuditLoggingMessage message = AuditLoggingMessage.newBuilder()
                     .setId(id.toString())
                     .setSessionId(defaultString(sessionId.toString(), "null"))

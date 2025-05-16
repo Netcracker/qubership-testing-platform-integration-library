@@ -33,7 +33,11 @@ import org.springframework.util.CollectionUtils;
 public class MdcUtils {
 
     /**
-     * Validate and put UUID in MDC.
+     * Validate UUID value against null and put it (converted to String) into MDC.
+     *
+     * @param key String key to put
+     * @param value UUID value to put
+     * @return true if value is put; otherwise false.
      */
     public static boolean put(String key, UUID value) {
         if (value != null) {
@@ -43,9 +47,13 @@ public class MdcUtils {
     }
 
     /**
-     * Validate and put String in MDC.
+     * Validate String value is not blank and put it into MDC.
+     *
+     * @param key String key to put
+     * @param value String value to put
+     * @return true if value is put; otherwise false.
      */
-    public static boolean put(String key, String value) {
+    public static boolean put(final String key, final String value) {
         if (StringUtils.isNotBlank(value)) {
             MDC.put(key, value);
             return true;
@@ -54,18 +62,25 @@ public class MdcUtils {
     }
 
     /**
-     * Convert id name in header name.
+     * Convert id name into header name.
+     *
+     * @param idName String business ID name
+     * @return String header name calculated.
      */
-    public static String convertIdNameToHeader(String idName) {
+    public static String convertIdNameToHeader(final String idName) {
         return "X-" + Arrays.stream(idName.split("(?=\\p{Upper})"))
                 .map(org.springframework.util.StringUtils::capitalize)
                 .collect(Collectors.joining("-"));
     }
 
     /**
-     * Returns header from request ignoring name case.
+     * Returns header value from request by header name ignoring case.
+     *
+     * @param request HttpServletRequest to process
+     * @param headerName String header name to get from request
+     * @return String header value or null.
      */
-    public static String getHeaderFromRequest(HttpServletRequest request, String headerName) {
+    public static String getHeaderFromRequest(final HttpServletRequest request, final String headerName) {
         if (request != null && request.getHeaderNames() != null) {
             for (String originalHeaderName : Collections.list(request.getHeaderNames())) {
                 if (originalHeaderName.equalsIgnoreCase(headerName)) {
@@ -78,19 +93,22 @@ public class MdcUtils {
 
     /**
      * Convert id names to list of strings.
+     *
+     * @param businessIdsString String list of business IDs separated by comma
+     * @return List of String business IDs.
      */
-    public static List<String> convertIdNamesToList(String businessIdsString) {
+    public static List<String> convertIdNamesToList(final String businessIdsString) {
         return StringUtils.isNotBlank(businessIdsString)
-                ? Arrays.stream(businessIdsString.split(","))
-                .map(String::trim).collect(Collectors.toList())
+                ? Arrays.stream(businessIdsString.split(",")).map(String::trim).collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
-
     /**
      * Set MDC for the current thread.
+     *
+     * @param mdcMap Map to set as MDC.
      */
-    public static void setContextMap(Map<String, String> mdcMap) {
+    public static void setContextMap(final Map<String, String> mdcMap) {
         MDC.setContextMap(CollectionUtils.isEmpty(mdcMap) ? new HashMap<>() : mdcMap);
     }
 }

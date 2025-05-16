@@ -28,22 +28,34 @@ import feign.RequestTemplate;
 
 public class FeignClientMdcContextInterceptorTest {
 
+    /**
+     * Feign Client Mdc Context Interceptor object.
+     */
     private FeignClientMdcContextInterceptor interceptor;
+
+    /**
+     * RequestTemplate object.
+     */
     private RequestTemplate request;
 
-
+    /**
+     * Before tests setup.
+     */
     @Before
     public void setUp() {
         interceptor = new FeignClientMdcContextInterceptor("projectId");
         request = new RequestTemplate();
     }
 
+    /**
+     * Test of applying of logging interceptor.
+     */
     @Test
-    public void logging_interceptor_shouldBeApplied() {
+    public void loggingInterceptorShouldBeApplied() {
         MdcUtils.put(MdcField.PROJECT_ID.toString(), UUID.randomUUID());
         interceptor.apply(request);
-        Assert.assertTrue(request.headers().containsKey(MdcUtils.convertIdNameToHeader(MdcField.PROJECT_ID.toString())));
+        Assert.assertTrue(request.headers().containsKey(
+                MdcUtils.convertIdNameToHeader(MdcField.PROJECT_ID.toString())));
     }
-
 
 }

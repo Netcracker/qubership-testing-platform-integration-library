@@ -38,12 +38,21 @@ import lombok.extern.slf4j.Slf4j;
 })
 public class NotificationServiceTest {
 
+    /**
+     * NotificationFeignClient bean.
+     */
     @MockBean
     NotificationFeignClient notificationFeignClient;
 
+    /**
+     * NotificationService bean.
+     */
     @Autowired
     NotificationService notificationService;
 
+    /**
+     * Test of notification sending.
+     */
     @Test
     public void sendNotificationTest() {
         Notification notification = new Notification("test message1", UUID.randomUUID());

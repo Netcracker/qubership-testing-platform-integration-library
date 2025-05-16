@@ -21,7 +21,19 @@ import lombok.NonNull;
 
 @Data
 public class Field {
-    @NonNull String field;
-    @NonNull String type;
-    @NonNull boolean optional;
+
+    /**
+     * Field name.
+     */
+    @NonNull private String field;
+
+    /**
+     * Field type.
+     */
+    @NonNull private String type;
+
+    /**
+     * If the field is optional (true) or not.
+     */
+    @NonNull private boolean optional;
 }

@@ -16,7 +16,7 @@
 
 package org.qubership.atp.integration.configuration.notification.client;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,17 +42,29 @@ import lombok.extern.slf4j.Slf4j;
 })
 public class RestNotificationClientTest {
 
+    /**
+     * NotificationFeignClient bean.
+     */
     @MockBean
     NotificationFeignClient notificationFeignClient;
 
+    /**
+     * NotificationClient bean.
+     */
     @Autowired
     NotificationClient notificationClient;
 
+    /**
+     * Test that NotificationClient class is determined correctly.
+     */
     @Test
     public void checkClientClass() {
-        assertTrue(RestNotificationClient.class == notificationClient.getClass());
+        assertSame(RestNotificationClient.class, notificationClient.getClass());
     }
 
+    /**
+     * Test of sending of notifications of different types.
+     */
     @Test
     public void sendNotifications() {
         List<Notification> notifications = Arrays.asList(

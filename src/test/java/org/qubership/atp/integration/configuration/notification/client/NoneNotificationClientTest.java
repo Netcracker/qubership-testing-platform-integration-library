@@ -16,7 +16,7 @@
 
 package org.qubership.atp.integration.configuration.notification.client;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,12 +35,18 @@ import lombok.extern.slf4j.Slf4j;
 })
 public class NoneNotificationClientTest {
 
+    /**
+     * NotificationClient bean.
+     */
     @Autowired
     NotificationClient notificationClient;
 
+    /**
+     * Test that NotificationClient class is determined correctly.
+     */
     @Test
     public void checkClientClass() {
-        assertTrue(NoneNotificationClient.class == notificationClient.getClass());
+        assertSame(NoneNotificationClient.class, notificationClient.getClass());
     }
 
 }

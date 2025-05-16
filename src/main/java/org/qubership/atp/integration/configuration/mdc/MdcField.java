@@ -18,15 +18,32 @@ package org.qubership.atp.integration.configuration.mdc;
 
 public enum MdcField {
 
+    /**
+     * Name of MDC tag for project id.
+     */
     PROJECT_ID("projectId"),
+
+    /**
+     * Name of MDC tag for user id.
+     */
     USER_ID("userId");
 
-    private String name;
+    private final String name;
 
-    MdcField(String type) {
+    /**
+     * Constructor.
+     *
+     * @param type String name.
+     */
+    MdcField(final String type) {
         this.name = type;
     }
 
+    /**
+     * Make String representation.
+     *
+     * @return String representation.
+     */
     @Override
     public String toString() {
         return this.name;

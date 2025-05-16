@@ -23,8 +23,14 @@ import org.qubership.atp.crypt.CryptoTools;
 
 public class AtpLog4jPatternLayout extends PatternLayout {
 
+    /**
+     * Format LoggingEvent into String.
+     *
+     * @param event - logging event
+     * @return - formatted logging event.
+     */
     @Override
-    public String format(LoggingEvent event) {
+    public String format(final LoggingEvent event) {
         if (event.getMessage() instanceof String) {
             LoggingEvent maskedEvent = getMaskedLoggingEvent(event);
             return super.format(maskedEvent);
@@ -34,10 +40,11 @@ public class AtpLog4jPatternLayout extends PatternLayout {
 
     /**
      * Creates masked logging event.
+     *
      * @param event - logging event
      * @return - masked logging event
      */
-    public static LoggingEvent getMaskedLoggingEvent(LoggingEvent event) {
+    public static LoggingEvent getMaskedLoggingEvent(final LoggingEvent event) {
         String message = event.getRenderedMessage();
 
         String maskedMessage = CryptoTools.maskEncryptedData(message);

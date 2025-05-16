@@ -25,11 +25,18 @@ import com.google.protobuf.MessageLite;
 public class KafkaProtobufSerializer<T extends MessageLite> implements Serializer<T> {
 
     @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
+    public void configure(final Map<String, ?> configs, final boolean isKey) {
     }
 
+    /**
+     * Serialize data.
+     *
+     * @param topic String topic name
+     * @param data T (extends MessageLite) data to be serialized
+     * @return byte[] result of serializing.
+     */
     @Override
-    public byte[] serialize(String topic, T data) {
+    public byte[] serialize(final String topic, final T data) {
         return data.toByteArray();
     }
 

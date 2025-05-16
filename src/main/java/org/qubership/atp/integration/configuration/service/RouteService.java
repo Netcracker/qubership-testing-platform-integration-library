@@ -24,29 +24,52 @@ import org.springframework.util.StringUtils;
 @Service
 public class RouteService {
 
+    /**
+     * Spring application name configuration setting.
+     */
     @Value("${spring.application.name}")
     private String serviceId;
 
+    /**
+     * Port number.
+     */
     @Value("${server.port: #{8080}}")
     private int port;
 
+    /**
+     * Service path.
+     */
     @Value("${atp.service.path:#{null}}")
     private String path;
 
+    /**
+     * Is the service public or not? (Should it be registered in public gateway or not?)
+     */
     @Value("${atp.service.public: #{true}}")
     private boolean isPublic;
 
+    /**
+     * Is the service internal or not? (Should it be registered in internal gateway or not?)
+     */
     @Value("${atp.service.internal: #{true}}")
     private boolean isInternal;
 
+    /**
+     * Context path.
+     */
     @Value("#{servletContext.contextPath}")
     private String servletContextPath;
 
+    /**
+     * Service URL.
+     */
     @Value("${atp.service.url:#{null}}")
     private String serviceUrl;
 
     /**
      * Prepares service route.
+     *
+     * @return new AtpRoute created and configured.
      */
     public AtpRoute getRoute() {
         AtpRoute atpRoute = new AtpRoute();

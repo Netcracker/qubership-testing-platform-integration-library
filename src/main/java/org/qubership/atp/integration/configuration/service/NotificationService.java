@@ -28,23 +28,26 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class NotificationService {
 
+    /**
+     * NotificationClient bean.
+     */
     private final NotificationClient notificationClient;
 
     /**
      * Sends the notification in the way specified in atp.notification.mode.
      *
-     * @param notification notification that need to send
+     * @param notification notification to be sent.
      */
-    public void sendNotification(Notification notification) {
+    public void sendNotification(final Notification notification) {
         notificationClient.sendNotification(notification);
     }
 
     /**
      * Sends the list of notifications in the way specified in atp.notification.mode.
      *
-     * @param notifications list of notifications that need to send
+     * @param notifications list of notifications to be sent.
      */
-    public void sendNotifications(List<Notification> notifications) {
+    public void sendNotifications(final List<Notification> notifications) {
         notificationClient.sendNotifications(notifications);
     }
 

@@ -22,7 +22,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class NotificationSchema {
+
+    /**
+     * Type of the schema; "struct" type currently.
+     */
     private String type = "struct";
+
+    /**
+     * Fields array of the schema.
+     * Three mandatory string fields are currently: message, type and userId.
+     */
     private Field[] fields = new Field[]{
             new Field("message", "string", false),
             new Field("type", "string", false),
