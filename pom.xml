@@ -50,7 +50,7 @@
     </developers>
     <scm>
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-integration-library.git</connection>
-        <developerConnection>scm:git:https://github.com:Netcracker/qubership-testing-platform-integration-library.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library.git</developerConnection>
         <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library/tree/main</url>
     </scm>
 
