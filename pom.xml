@@ -1,40 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.18</version>
-        <relativePath/><!-- lookup parent from repository -->
+        <relativePath /><!-- lookup parent from repository -->
     </parent>
 
     <groupId>org.qubership.atp</groupId>
     <artifactId>atp-integration-spring-boot-starter</artifactId>
-    <version>${revision}</version>
+    <version>0.2.39-SNAPSHOT</version>
 
     <properties>
-        <revision>0.2.38-SNAPSHOT</revision>
         <java.version>21</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
-        <atp-crypt.version>0.0.19-SNAPSHOT</atp-crypt.version>
-        <atp-common-logging.version>0.0.42-SNAPSHOT</atp-common-logging.version>
+        <atp-crypt.version>0.0.20</atp-crypt.version>
+        <atp-common-logging.version>0.0.43</atp-common-logging.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
-        <atp.codechecks.version>1.1.0-SNAPSHOT</atp.codechecks.version>
-        <maven.pmd.plugin.version>3.8</maven.pmd.plugin.version>
-        <pmd.version>7.0.0</pmd.version>
-        <spotbugs.maven.plugin.version>4.7.3.0</spotbugs.maven.plugin.version>
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
-
         <junit.jupiter.version>5.9.3</junit.jupiter.version>
     </properties>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ATP Auth Spring Boot Starter</description>
+    <description>Qubership Testing Platform Integration library</description>
     <url>https://github.com/Netcracker/qubership-testing-platform-integration-library</url>
     <licenses>
         <license>
@@ -52,9 +44,10 @@
     </developers>
     <scm>
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-integration-library.git</connection>
-        <developerConnection>scm:git:https://github.com:Netcracker/qubership-testing-platform-integration-library.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library.git</developerConnection>
         <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library/tree/main</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <dependencies>
         <dependency>
@@ -326,6 +319,16 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.1.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.18.0</version>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.johnzon</groupId>
                 <artifactId>johnzon-maven-plugin</artifactId>
             </plugin>
@@ -397,46 +400,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven.pmd.plugin.version}</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>org/qubership/atp/codechecks/pmd-ruleset.xml</ruleset>
-                    </rulesets>
-                    <printFailingErrors>true</printFailingErrors>
-                    <failOnViolation>false</failOnViolation>
-                    <targetDirectory>${project.build.directory}/pmd</targetDirectory>
-                    <targetJdk>${maven.compiler.target}</targetJdk>
-                    <includeTests>false</includeTests>
-                    <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
-                    <linkXRef>false</linkXRef>
-                    <format>xml</format>
-                    <minimumTokens>100</minimumTokens>
-                    <language>java</language>
-                    <excludes>
-                        <exclude>**/protos/*.*</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pmd</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>pmd</goal>
-                            <goal>cpd</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.qubership.atp.codechecks</groupId>
-                        <artifactId>qubership-atp-codechecks</artifactId>
-                        <version>${atp.codechecks.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
                 <version>3.8.0</version>
@@ -461,94 +424,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <configuration>
-                    <configLocation>
-                        org/qubership/atp/codechecks/checkstyle.xml
-                    </configLocation>
-                    <outputFile>
-                        ${project.build.directory}/checkstyle/checkstyle-result.xml
-                    </outputFile>
-                    <excludes>**/protos/*.*</excludes>
-                    <linkXRef>false</linkXRef>
-                    <failsOnError>false</failsOnError>
-                    <failOnViolation>false</failOnViolation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>verify-style</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>7.8.2</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.qubership.atp.codechecks</groupId>
-                        <artifactId>qubership-atp-codechecks</artifactId>
-                        <version>${atp.codechecks.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${spotbugs.maven.plugin.version}</version>
-                <configuration>
-                    <xmlOutput>true</xmlOutput>
-                    <spotbugsXmlOutput>true</spotbugsXmlOutput>
-                    <effort>Max</effort>
-                    <failOnError>false</failOnError>
-                    <threshold>Low</threshold>
-                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs/xml</spotbugsXmlOutputDirectory>
-                    <includeFilterFile>org/qubership/atp/codechecks/findbugs-filter.xml</includeFilterFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>analyze-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.qubership.atp.codechecks</groupId>
-                        <artifactId>qubership-atp-codechecks</artifactId>
-                        <version>${atp.codechecks.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-analysis</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-commons</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-tree</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
