@@ -159,7 +159,9 @@ public void consume(KafkaMailResponse mailResponse) {
 ```
 
 ## Audit Logging
-### 1. Add audit logging properties into application.properties
+### Add audit logging properties into application.properties
+#### A. Kafka sender
+
 Mandatory properties:
 ```properties
 spring.kafka.producer.bootstrap-servers=...
@@ -171,6 +173,19 @@ Optional properties:
 ```properties
 atp.audit.logging.topic.partitions=1
 atp.audit.logging.topic.replicas=3
+```
+#### B. REST Feign sender
+
+Mandatory properties:
+```properties
+atp.audit.logging.rest.enable=true/false
+feign.atp.audit.logging.rest.url=http://your-audit-service:8080
+```
+
+Optional properties (don't set if url is set):
+```properties
+feign.atp.audit.logging.rest.name=atp-audit-service
+feign.atp.audit.logging.rest.route=/api/v1/audit
 ```
 
 ## Logging business IDs
