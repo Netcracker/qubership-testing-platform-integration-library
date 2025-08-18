@@ -16,12 +16,8 @@
 
 package org.qubership.atp.integration.configuration.configuration;
 
-import java.util.stream.Collectors;
-
-import org.qubership.atp.integration.configuration.metrics.providers.CustomWebMvcTagsProvider;
-import org.springframework.beans.factory.ObjectProvider;
+import org.qubership.atp.integration.configuration.metrics.observation.CustomServerRequestObservationConvention;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
-import org.springframework.boot.actuate.metrics.web.servlet.WebMvcTagsContributor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,28 +27,12 @@ import org.springframework.context.annotation.Configuration;
 public class AtpWebMetricsConfiguration {
 
     /**
-     * Metrics Properties.
-     */
-    private final MetricsProperties properties;
-
-    /**
-     * Constructor from Metrics Properties.
-     *
-     * @param properties Metrics Properties to set.
-     */
-    public AtpWebMetricsConfiguration(final MetricsProperties properties) {
-        this.properties = properties;
-    }
-
-    /**
      * Create Web MVC Tags Provider using contributors parameter and properties field.
      *
-     * @param contributors Provider of WebMvcTagsContributor
      * @return new CustomWebMvcTagsProvider configured.
      */
     @Bean
-    public CustomWebMvcTagsProvider webMvcTagsProvider(final ObjectProvider<WebMvcTagsContributor> contributors) {
-        return new CustomWebMvcTagsProvider(this.properties.getWeb().getServer().getRequest().isIgnoreTrailingSlash(),
-                contributors.orderedStream().collect(Collectors.toList()));
+    public CustomServerRequestObservationConvention customServerRequestObservationConvention() {
+        return new CustomServerRequestObservationConvention();
     }
 }

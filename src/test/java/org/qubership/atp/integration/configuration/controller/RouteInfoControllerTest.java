@@ -19,8 +19,8 @@ package org.qubership.atp.integration.configuration.controller;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;

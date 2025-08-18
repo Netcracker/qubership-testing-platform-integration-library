@@ -53,9 +53,16 @@ public class MdcTaskDecoratorTest {
      * @throws InterruptedException in case the corresponding exception is thrown during future processing.
      */
     @Test
-    public void testMdcTaskDecoratorThreadPoolWithoutMdcDecoratorTaskMdcContextWasNotCopiedForNewThread()
+    public void testMdcTaskDecorator_ThreadPoolWithoutMdcDecoratorTask_MdcContextWasNotCopiedForNewThread()
             throws ExecutionException, InterruptedException {
-        submitAndGetFuture(); // It implicitly relies on the sequence of tests execution.
+        MDC.put("projectId", "123");
+
+        Future<?> future = executor.submit((Callable<Void>) () -> {
+            Assert.assertNull(MDC.get("projectId"));
+            return null;
+        });
+
+        future.get();
     }
 
     /**
@@ -65,18 +72,16 @@ public class MdcTaskDecoratorTest {
      * @throws InterruptedException in case the corresponding exception is thrown during future processing.
      */
     @Test
-    public void testMdcTaskDecoratorThreadPoolWithMdcDecoratorTaskMdcContextWasCopiedForNewThread()
+    public void testMdcTaskDecorator_ThreadPoolWithMdcDecoratorTask_MdcContextWasCopiedForNewThread()
             throws ExecutionException, InterruptedException {
         executor.setTaskDecorator(new MdcTaskDecorator());
-        submitAndGetFuture();
-    }
-
-    private void submitAndGetFuture() throws ExecutionException, InterruptedException {
         MDC.put("projectId", "123");
+
         Future<?> future = executor.submit((Callable<Void>) () -> {
-            Assert.assertNull(MDC.get("projectId"));
+            Assert.assertEquals("123", MDC.get("projectId"));
             return null;
         });
+
         future.get();
     }
 

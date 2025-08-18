@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.kafka.common.errors.RecordTooLargeException;
 import org.qubership.atp.integration.configuration.feign.MailSenderFeignClient;
@@ -30,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.StringUtils;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -202,7 +202,7 @@ public class MailSenderService {
         MailResponse response = new MailResponse();
         response.setTimestamp(new Date());
         try {
-            ListenableFuture<SendResult<UUID, MailRequest>> future = kafkaTemplate.send(mailRequestTopic, mail);
+            CompletableFuture<SendResult<UUID, MailRequest>> future = kafkaTemplate.send(mailRequestTopic, mail);
             future.get();
             response.setStatus(200);
             response.setMessage("Mail request successfully sent to kafka");

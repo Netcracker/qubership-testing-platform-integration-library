@@ -19,8 +19,6 @@ package org.qubership.atp.integration.configuration.configuration;
 import java.util.Properties;
 import java.util.UUID;
 
-import javax.servlet.Filter;
-
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.UUIDSerializer;
@@ -36,6 +34,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import jakarta.servlet.Filter;
 
 @ConditionalOnProperty(value = "atp.audit.logging.enable", havingValue = "true")
 @EnableAspectJAutoProxy

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.apache.http.HttpHeaders;
 import org.junit.Assert;
