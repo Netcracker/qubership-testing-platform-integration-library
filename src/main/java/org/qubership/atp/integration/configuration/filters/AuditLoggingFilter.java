@@ -19,6 +19,7 @@ package org.qubership.atp.integration.configuration.filters;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import java.io.IOException;
+import java.util.Map;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -65,8 +66,9 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
 
         final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String url = request.getRequestURI();
-        if (MDC.getCopyOfContextMap() != null) {
-            MDC.getCopyOfContextMap().remove("userAction");
+        Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
+        if (copyOfContextMap != null) {
+            copyOfContextMap.remove("userAction");
         }
         log.debug("Continue request filter chain");
         filterChain.doFilter(request, response);
