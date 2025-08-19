@@ -51,7 +51,7 @@ public class AtpLog4jPatternLayout extends PatternLayout {
         @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
         Throwable throwable = event.getThrowableInformation() != null
                 ? event.getThrowableInformation().getThrowable() : null;
-        return new LoggingEvent(event.fqnOfCategoryClass,
+        return new LoggingEvent(event.getFQNOfLoggerClass(),
                 Logger.getLogger(event.getLoggerName()), event.timeStamp,
                 event.getLevel(), maskedMessage, throwable);
     }

@@ -11,7 +11,7 @@
 
     <groupId>org.qubership.atp</groupId>
     <artifactId>atp-integration-spring-boot-starter</artifactId>
-    <version>0.2.39-SNAPSHOT</version>
+    <version>0.2.40-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
@@ -19,7 +19,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <atp-crypt.version>0.0.22-SNAPSHOT</atp-crypt.version>
-        <atp-common-logging.version>0.0.44-SNAPSHOT</atp-common-logging.version>
+        <atp-common-logging.version>0.0.45-SNAPSHOT</atp-common-logging.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
@@ -126,9 +126,23 @@
             <version>1.14.1</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>2.25.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.reload4j</groupId>
+                    <artifactId>reload4</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.qubership.atp.common</groupId>
