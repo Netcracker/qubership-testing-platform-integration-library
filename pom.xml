@@ -18,8 +18,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
-        <atp-crypt.version>0.0.22-SNAPSHOT</atp-crypt.version>
-        <atp-common-logging.version>0.0.45-SNAPSHOT</atp-common-logging.version>
+        <atp-crypt.version>0.0.22</atp-crypt.version>
+        <atp-common-logging.version>0.0.45</atp-common-logging.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
