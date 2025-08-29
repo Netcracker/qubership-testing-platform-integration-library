@@ -18,8 +18,12 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
-        <atp-crypt.version>0.0.22</atp-crypt.version>
-        <atp-common-logging.version>0.0.45</atp-common-logging.version>
+
+        <biz.paluch.logging.version>1.14.1</biz.paluch.logging.version>
+
+        <atp-crypt.version>0.0.23</atp-crypt.version>
+        <atp-common-logging.version>0.0.46</atp-common-logging.version>
+
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
@@ -123,12 +127,7 @@
         <dependency>
             <groupId>biz.paluch.logging</groupId>
             <artifactId>logstash-gelf</artifactId>
-            <version>1.14.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>2.25.0</version>
+            <version>${biz.paluch.logging.version}</version>
         </dependency>
         <dependency>
             <groupId>org.qubership.atp.common</groupId>
@@ -163,7 +162,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.67</version>
+            <version>1.70</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
