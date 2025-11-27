@@ -10,7 +10,7 @@
 
     <groupId>org.qubership.atp</groupId>
     <artifactId>atp-integration-spring-boot-starter</artifactId>
-    <version>0.2.39-SNAPSHOT</version>
+    <version>0.2.42-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
@@ -45,7 +45,7 @@
     <scm>
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-integration-library.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library.git</developerConnection>
-        <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library/tree/main</url>
+        <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-integration-library.git</url>
       <tag>HEAD</tag>
   </scm>
 
