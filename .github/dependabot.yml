@@ -12,5 +12,5 @@ updates:
       interval: "weekly"
     # Ignore specific dependencies or versions
     ignore:
-      - dependency-name: "netcracker/qubership-workflow-hub/.github/workflows/re-maven-snapshot-deploy.yaml"
+      - dependency-name: "*re-maven-snapshot-deploy*"
         versions: [ "~> 1.0.7" ]
