@@ -19,12 +19,12 @@ package org.qubership.atp.integration.configuration.interceptors;
 import java.io.IOException;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.slf4j.MDC;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.lang.NonNull;
 
 public class MdcClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
@@ -51,10 +51,10 @@ public class MdcClientHttpRequestInterceptor implements ClientHttpRequestInterce
      * @return ClientHttpResponse object
      * @throws IOException in case execution exceptions.
      */
-    @NotNull
+    @NonNull
     @Override
-    public ClientHttpResponse intercept(@NotNull final org.springframework.http.HttpRequest request,
-                                        @NotNull final byte[] body,
+    public ClientHttpResponse intercept(@NonNull final org.springframework.http.HttpRequest request,
+                                        @NonNull final byte[] body,
                                         final ClientHttpRequestExecution execution) throws IOException {
         businessIds.forEach(idName -> {
             if (MDC.get(idName) != null) {
