@@ -10,7 +10,5 @@ updates:
       - "/.github/workflows"
     schedule:
       interval: "weekly"
-    # Ignore specific dependencies or versions
-    ignore:
-      - dependency-name: "*re-maven-snapshot-deploy*"
-        versions: [ "~> 1.0.7" ]
+    exclude-paths:
+      - ".github/workflows/maven-central-snapshot-deploy.yaml"

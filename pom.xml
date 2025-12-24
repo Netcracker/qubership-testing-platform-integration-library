@@ -18,7 +18,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
 
-        <atp-crypt.version>0.0.20</atp-crypt.version>
+        <atp-crypt.version>0.0.24</atp-crypt.version>
         <atp-common-logging.version>0.0.47</atp-common-logging.version>
 
         <google.guava.version>32.0.1-jre</google.guava.version>
@@ -27,6 +27,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-fileupload.version>1.6.0</commons-fileupload.version>
+        <bouncycastle.version>1.78.1</bouncycastle.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
@@ -144,18 +145,14 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-jwt</artifactId>
-            <version>1.1.1.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.67</version>
+            <artifactId>bcprov-jdk18on</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -243,6 +240,46 @@
                 <groupId>at.yawk.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
                 <version>1.10.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>1.1.1.RELEASE</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-rsa</artifactId>
+                <version>1.0.11.RELEASE</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
