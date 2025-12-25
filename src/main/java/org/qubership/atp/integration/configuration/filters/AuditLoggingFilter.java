@@ -16,9 +16,8 @@
 
 package org.qubership.atp.integration.configuration.filters;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,6 +28,7 @@ import org.apache.http.HttpHeaders;
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
 import org.qubership.atp.integration.configuration.service.AuditLoggingService;
 import org.slf4j.MDC;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -62,15 +62,15 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
         log.debug("Intercept request for audit logging");
-
         final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String url = request.getRequestURI();
-        if (MDC.getCopyOfContextMap() != null) {
-            MDC.getCopyOfContextMap().remove("userAction");
+        Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
+        if (copyOfContextMap != null) {
+            copyOfContextMap.remove("userAction");
         }
         log.debug("Continue request filter chain");
         filterChain.doFilter(request, response);
-        if (isEmpty(authToken)) {
+        if (!StringUtils.hasLength(authToken)) {
             log.debug("Audit logging was skipped for the '{}' request because of empty Authorization token", url);
         } else {
             boolean isM2Mtoken;
