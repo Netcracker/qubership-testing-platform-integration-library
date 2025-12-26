@@ -72,16 +72,16 @@ public class MdcHttpFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean processHeaders(final HttpServletRequest request, final String idName) {
-        return MdcUtils.put(idName, MdcUtils.getHeaderFromRequest(request, MdcUtils.convertIdNameToHeader(idName)));
+    private void processHeaders(final HttpServletRequest request, final String idName) {
+        MdcUtils.put(idName, MdcUtils.getHeaderFromRequest(request, MdcUtils.convertIdNameToHeader(idName)));
     }
 
     private void processUserId(final HttpServletRequest request) {
         final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authToken != null && StringUtils.startsWithIgnoreCase(authToken, "Bearer ")) {
             try {
-                if (!jwtParseHelper.isM2Mtoken(authToken)) {
-                    final UUID userId = jwtParseHelper.getUserIdFromToken(authToken);
+                final UUID userId = jwtParseHelper.getUserIdFromNonM2MToken(authToken);
+                if (userId != null) {
                     MdcUtils.put(MdcField.USER_ID.toString(), userId);
                 }
             } catch (Exception e) {

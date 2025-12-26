@@ -73,17 +73,14 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
         if (!StringUtils.hasLength(authToken)) {
             log.debug("Audit logging was skipped for the '{}' request because of empty Authorization token", url);
         } else {
-            boolean isM2Mtoken;
             try {
-                isM2Mtoken = jwtParseHelper.isM2Mtoken(authToken);
+                if (jwtParseHelper.isM2Mtoken(authToken)) {
+                    log.debug("Audit logging was skipped for the '{}' request because of M2M Authorization token", url);
+                } else {
+                    auditLoggingService.loggingRequest(request, response);
+                }
             } catch (Exception e) {
                 log.error("Error while checking token type", e);
-                isM2Mtoken = false;
-            }
-            if (isM2Mtoken) {
-                log.debug("Audit logging was skipped for the '{}' request because of M2M Authorization token", url);
-            } else {
-                auditLoggingService.loggingRequest(request, response);
             }
         }
     }
