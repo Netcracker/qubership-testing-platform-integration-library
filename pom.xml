@@ -20,7 +20,7 @@
         <biz.paluch.logging.version>1.14.1</biz.paluch.logging.version>
 
         <atp-crypt.version>0.0.23</atp-crypt.version>
-        <atp-common-logging.version>0.0.46</atp-common-logging.version>
+        <atp-common-logging.version>1.0.0-SNAPSHOT</atp-common-logging.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
@@ -329,6 +329,7 @@
             <plugin>
                 <groupId>org.apache.johnzon</groupId>
                 <artifactId>johnzon-maven-plugin</artifactId>
+                <version>2.0.2</version>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
