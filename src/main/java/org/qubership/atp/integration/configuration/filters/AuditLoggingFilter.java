@@ -21,17 +21,16 @@ import static org.springframework.util.StringUtils.isEmpty;
 import java.io.IOException;
 import java.util.Map;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.http.HttpHeaders;
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
 import org.qubership.atp.integration.configuration.service.AuditLoggingService;
 import org.slf4j.MDC;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,17 +74,14 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
         if (isEmpty(authToken)) {
             log.debug("Audit logging was skipped for the '{}' request because of empty Authorization token", url);
         } else {
-            boolean isM2Mtoken;
             try {
-                isM2Mtoken = jwtParseHelper.isM2Mtoken(authToken);
+                if (jwtParseHelper.isM2Mtoken(authToken)) {
+                    log.debug("Audit logging was skipped for the '{}' request because of M2M Authorization token", url);
+                } else {
+                    auditLoggingService.loggingRequest(request, response);
+                }
             } catch (Exception e) {
                 log.error("Error while checking token type", e);
-                isM2Mtoken = false;
-            }
-            if (isM2Mtoken) {
-                log.debug("Audit logging was skipped for the '{}' request because of M2M Authorization token", url);
-            } else {
-                auditLoggingService.loggingRequest(request, response);
             }
         }
     }

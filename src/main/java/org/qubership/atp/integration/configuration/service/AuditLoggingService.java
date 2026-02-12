@@ -16,15 +16,11 @@
 
 package org.qubership.atp.integration.configuration.service;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpHeaders;
 import org.apache.kafka.clients.producer.Producer;
@@ -35,6 +31,8 @@ import org.qubership.atp.integration.configuration.protos.KafkaAuditLoggingMessa
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,9 +85,24 @@ public class AuditLoggingService {
             final UUID id = UUID.randomUUID();
             final UUID projectId = httpRequestParseHelper.getRequestUuidHeader(request, PROJECT_ID_HEADER_NAME, false);
             final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-            final UUID sessionId = jwtParseHelper.getSessionIdFromToken(authToken);
-            final String username = jwtParseHelper.getUsernameFromToken(authToken);
-            final UUID userId = jwtParseHelper.getUserIdFromToken(authToken);
+
+            final UUID sessionId;
+            final String username;
+            final UUID userId;
+            Map<String, ?> tokenDataMap = jwtParseHelper.getTokenDataMapFromToken(authToken);
+            if (tokenDataMap != null) {
+                sessionId = jwtParseHelper.getSessionIdFromTokenDataMap(tokenDataMap);
+                username = jwtParseHelper.getUsernameFromTokenDataMap(tokenDataMap);
+                userId = jwtParseHelper.getUserIdFromTokenDataMap(tokenDataMap);
+            } else {
+                sessionId = null;
+                username = null;
+                userId = null;
+            }
+            if (userId == null || sessionId == null) {
+                throw new IllegalStateException("UserId and/or SessionId (parsed from token) are null");
+            }
+
             final Timestamp startDate = new Timestamp(System.currentTimeMillis());
             final String httpMethod = request.getMethod();
             final String refererPage = request.getHeader("referer");
@@ -104,18 +117,18 @@ public class AuditLoggingService {
 
             AuditLoggingMessage message = AuditLoggingMessage.newBuilder()
                     .setId(id.toString())
-                    .setSessionId(defaultString(sessionId.toString(), "null"))
-                    .setProjectId(defaultString(projectId.toString(), "null"))
-                    .setService(defaultString(serviceName, "null"))
-                    .setUsername(defaultString(username, "null"))
+                    .setSessionId(Objects.toString(sessionId, "null"))
+                    .setProjectId(Objects.toString(projectId, "null"))
+                    .setService(Objects.toString(serviceName, "null"))
+                    .setUsername(Objects.toString(username, "null"))
                     .setUserId(userId.toString())
-                    .setUrl(defaultString(url, "null"))
+                    .setUrl(Objects.toString(url, "null"))
                     .setStartDate(startDate.getTime())
-                    .setHttpMethod(defaultString(httpMethod, "null"))
-                    .setReferPage(defaultString(refererPage, "null"))
-                    .setIpAddress(defaultString(ipAddress, "null"))
+                    .setHttpMethod(Objects.toString(httpMethod, "null"))
+                    .setReferPage(Objects.toString(refererPage, "null"))
+                    .setIpAddress(Objects.toString(ipAddress, "null"))
                     .setUserAgent(userAgent)
-                    .setUserAction(defaultString(mdcMap.get("userAction"), "null"))
+                    .setUserAction(Objects.toString(mdcMap.get("userAction"), "null"))
                     .setHttpStatusCode(httpStatusCode)
                     .build();
 
