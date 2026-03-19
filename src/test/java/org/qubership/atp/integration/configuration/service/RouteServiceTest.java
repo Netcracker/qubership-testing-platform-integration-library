@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
 
 package org.qubership.atp.integration.configuration.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.component.RouteRegisterComponent;
 import org.qubership.atp.integration.configuration.model.AtpRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 public class RouteServiceTest {
@@ -41,7 +38,7 @@ public class RouteServiceTest {
     /**
      * RouteRegisterComponent bean.
      */
-    @MockBean
+    @MockitoBean
     private RouteRegisterComponent routeRegisterComponent;
 
     /**
@@ -50,8 +47,8 @@ public class RouteServiceTest {
     @Test
     public void getRouteShouldReturnRouteInfo() {
         AtpRoute route = routeService.getRoute();
-        Assert.assertEquals("mock-service", route.getServiceId());
-        Assert.assertEquals("/api/mock-service/v1/**", route.getPath());
-        Assert.assertTrue(route.isPublic());
+        Assertions.assertEquals("mock-service", route.getServiceId());
+        Assertions.assertEquals("/api/mock-service/v1/**", route.getPath());
+        Assertions.assertTrue(route.isPublic());
     }
 }

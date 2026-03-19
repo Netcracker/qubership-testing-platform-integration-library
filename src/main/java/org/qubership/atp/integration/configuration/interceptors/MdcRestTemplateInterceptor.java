@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ package org.qubership.atp.integration.configuration.interceptors;
 
 import java.util.List;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.slf4j.MDC;
 
@@ -41,19 +42,19 @@ public class MdcRestTemplateInterceptor implements HttpRequestInterceptor {
     }
 
     /**
-     * Process HttpRequest - add headers for all businessIds present in MDC.
+     * Process HttpRequest - add headers for all businessIds present in MDC (with non-null values).
      *
-     * @param request HttpRequest to process
-     * @param context HttpContext object.
+     * @param httpRequest HttpRequest to process
+     * @param entityDetails EntityDetails object
+     * @param httpContext HttpContext object.
      */
     @Override
-    public void process(final HttpRequest request, final HttpContext context) {
+    public void process(HttpRequest httpRequest, EntityDetails entityDetails, HttpContext httpContext) {
         businessIds.forEach(idName -> {
             String value = MDC.get(idName);
             if (value != null) {
-                request.addHeader(MdcUtils.convertIdNameToHeader(idName), value);
+                httpRequest.addHeader(MdcUtils.convertIdNameToHeader(idName), value);
             }
         });
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -132,7 +131,7 @@ public class MdcContextHttpInterceptor implements HandlerInterceptor {
         String name = idName.trim();
         if (parameterMap != null) {
             String[] value = parameterMap.get(name);
-            if (!StringUtils.isEmpty(value)) {
+            if (value != null && value.length != 0) {
                 MdcUtils.put(name, String.join(",", value));
             }
         }

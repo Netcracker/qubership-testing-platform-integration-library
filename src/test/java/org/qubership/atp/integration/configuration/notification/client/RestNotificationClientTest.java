@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,27 +16,24 @@
 
 package org.qubership.atp.integration.configuration.notification.client;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.feign.NotificationFeignClient;
 import org.qubership.atp.integration.configuration.model.notification.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = {
         "atp.notification.mode=rest"
 })
@@ -45,7 +42,7 @@ public class RestNotificationClientTest {
     /**
      * NotificationFeignClient bean.
      */
-    @MockBean
+    @MockitoBean
     NotificationFeignClient notificationFeignClient;
 
     /**

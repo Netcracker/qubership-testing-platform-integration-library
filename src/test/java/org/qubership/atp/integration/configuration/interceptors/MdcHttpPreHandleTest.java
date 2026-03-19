@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import java.util.UUID;
 
 import jakarta.servlet.ServletException;
 
-import org.apache.http.HttpHeaders;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.filters.AuditLoggingFilterTest;
 import org.qubership.atp.integration.configuration.filters.MdcHttpFilter;
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
@@ -57,7 +57,7 @@ public class MdcHttpPreHandleTest {
     /**
      * Setup interceptor, filter and request before tests.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         interceptor = new MdcContextHttpInterceptor(null, new JwtParseHelper(), "projectId");
         filter = new MdcHttpFilter(new JwtParseHelper(), Collections.singletonList("projectId"));
@@ -76,8 +76,8 @@ public class MdcHttpPreHandleTest {
         request.addHeader(HttpHeaders.AUTHORIZATION, AuditLoggingFilterTest.TEST_AUTH_HEADER);
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
-        Assert.assertNotNull(MDC.get(MdcField.PROJECT_ID.toString()));
-        Assert.assertNotNull(MDC.get(MdcField.USER_ID.toString()));
+        Assertions.assertNotNull(MDC.get(MdcField.PROJECT_ID.toString()));
+        Assertions.assertNotNull(MDC.get(MdcField.USER_ID.toString()));
     }
 
     /**
@@ -90,7 +90,7 @@ public class MdcHttpPreHandleTest {
     public void loggingInterceptorUserIdIsAbsent() throws ServletException, IOException {
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
-        Assert.assertNull(MDC.get(MdcField.USER_ID.toString()));
+        Assertions.assertNull(MDC.get(MdcField.USER_ID.toString()));
     }
 
     /**
@@ -104,7 +104,7 @@ public class MdcHttpPreHandleTest {
     public void loggingInterceptorProjectIdIsAbsent() throws ServletException, IOException {
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
-        Assert.assertNull(MDC.get(MdcField.PROJECT_ID.toString()));
+        Assertions.assertNull(MDC.get(MdcField.PROJECT_ID.toString()));
     }
 
     /**
@@ -118,7 +118,7 @@ public class MdcHttpPreHandleTest {
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         request.addHeader(HttpHeaders.AUTHORIZATION, AuditLoggingFilterTest.TEST_M2M_HEADER);
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
-        Assert.assertNull(MDC.get(MdcField.USER_ID.toString()));
+        Assertions.assertNull(MDC.get(MdcField.USER_ID.toString()));
     }
 
     /**
@@ -132,7 +132,7 @@ public class MdcHttpPreHandleTest {
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         request.addHeader(HttpHeaders.AUTHORIZATION, AuditLoggingFilterTest.TEST_BASIC_HEADER);
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
-        Assert.assertNull(MDC.get(MdcField.USER_ID.toString()));
+        Assertions.assertNull(MDC.get(MdcField.USER_ID.toString()));
     }
 
     /**
@@ -146,7 +146,7 @@ public class MdcHttpPreHandleTest {
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         request.addHeader(HttpHeaders.AUTHORIZATION, AuditLoggingFilterTest.BROKEN_BEARER_HEADER);
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
-        Assert.assertNull(MDC.get(MdcField.USER_ID.toString()));
+        Assertions.assertNull(MDC.get(MdcField.USER_ID.toString()));
     }
 
 }

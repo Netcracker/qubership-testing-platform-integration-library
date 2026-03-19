@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.qubership.atp.integration.configuration.controller;
 
 import org.qubership.atp.integration.configuration.model.AtpRoute;
 import org.qubership.atp.integration.configuration.service.RouteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +32,6 @@ public class RouteInfoController {
      *
      * @param routeService RouteService.
      */
-    @Autowired
     public RouteInfoController(final RouteService routeService) {
         this.routeService = routeService;
     }

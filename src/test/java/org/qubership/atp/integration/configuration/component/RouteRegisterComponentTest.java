@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.qubership.atp.integration.configuration.component;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -24,18 +24,16 @@ import static org.mockito.Mockito.doThrow;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.feign.PublicGatewayFeignClient;
 import org.qubership.atp.integration.configuration.model.AtpRoute;
 import org.qubership.atp.integration.configuration.service.RouteService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -45,20 +43,19 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RouteService.class, RouteRegisterComponent.class})
 public class RouteRegisterComponentTest {
 
     /**
      * Public Gateway Feign Client Bean.
      */
-    @MockBean
+    @MockitoBean
     PublicGatewayFeignClient publicGatewayFeignClient;
 
     /**
      * Route Service Bean.
      */
-    @SpyBean
+    @MockitoSpyBean
     RouteService routeService;
 
     /**
@@ -75,7 +72,7 @@ public class RouteRegisterComponentTest {
     /**
      * Before test handler.
      */
-    @Before
+    @BeforeEach
     public void before() {
         atpRoute = routeService.getRoute();
         doReturn(atpRoute).when(routeService).getRoute();

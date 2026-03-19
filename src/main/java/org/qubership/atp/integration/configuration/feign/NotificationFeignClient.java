@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,9 +20,8 @@ import java.util.List;
 
 import org.qubership.atp.integration.configuration.model.notification.Notification;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(name = "${feign.atp.notification.name:atp-notification}", url = "${feign.atp.notification.url:}")
 public interface NotificationFeignClient {
@@ -32,9 +31,7 @@ public interface NotificationFeignClient {
      *
      * @param notifications List of Notification objects.
      */
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "${feign.atp.notification.route}/api/v1/notification/notifications")
+    @PostMapping("${feign.atp.notification.route}/api/v1/notification/notifications")
     void sendNotifications(@RequestBody List<Notification> notifications);
 
 }

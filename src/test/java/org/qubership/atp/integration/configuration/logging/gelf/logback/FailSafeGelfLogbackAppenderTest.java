@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.qubership.atp.integration.configuration.logging.gelf.logback;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.core.status.InfoStatus;
@@ -67,7 +67,7 @@ public class FailSafeGelfLogbackAppenderTest {
     /**
      * Configure and add appender, then start it before tests.
      */
-    @Before
+    @BeforeEach
     public void setup() {
         failSafeGelfLogbackAppenderHostUnknown = new FailSafeGelfLogbackAppender();
         failSafeGelfLogbackAppenderHostUnknown.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
@@ -79,7 +79,7 @@ public class FailSafeGelfLogbackAppenderTest {
     /**
      * Stop and detach appender after tests.
      */
-    @After
+    @AfterEach
     public void cleanUp() {
         failSafeGelfLogbackAppenderHostUnknown.stop();
         LOGGER.detachAppender(failSafeGelfLogbackAppenderHostUnknown);
@@ -92,20 +92,20 @@ public class FailSafeGelfLogbackAppenderTest {
     public void generateLogsWithAppenderHostIncorrectExpectCreatingConsoleAppender() {
         generateLogs(MSG);
 
-        Assert.assertFalse(failSafeGelfLogbackAppenderHostUnknown.isGraylogAvailable());
-        Assert.assertTrue(failSafeGelfLogbackAppenderHostUnknown.getContext()
+        Assertions.assertFalse(failSafeGelfLogbackAppenderHostUnknown.isGraylogAvailable());
+        Assertions.assertTrue(failSafeGelfLogbackAppenderHostUnknown.getContext()
                 .getStatusManager()
                 .getCopyOfStatusList()
                 .stream()
                 .anyMatch(status -> status instanceof WarnStatus
                         && WARNING_MESSAGE_INCORRECT_HOST.equals(status.getMessage())));
-        Assert.assertTrue(failSafeGelfLogbackAppenderHostUnknown.getContext()
+        Assertions.assertTrue(failSafeGelfLogbackAppenderHostUnknown.getContext()
                 .getStatusManager()
                 .getCopyOfStatusList()
                 .stream()
                 .anyMatch(status -> status instanceof InfoStatus
                         && FailSafeGelfLogbackAppender.INFO_MESSAGE.equals(status.getMessage())));
-        Assert.assertNotNull(failSafeGelfLogbackAppenderHostUnknown.getConsoleAppender());
+        Assertions.assertNotNull(failSafeGelfLogbackAppenderHostUnknown.getConsoleAppender());
     }
 
     private void generateLogs(final String message) {

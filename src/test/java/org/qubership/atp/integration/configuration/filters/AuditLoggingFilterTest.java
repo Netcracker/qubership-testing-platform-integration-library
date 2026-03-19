@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,20 +23,18 @@ import static org.qubership.atp.integration.configuration.service.AuditLoggingSe
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpHeaders;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.configuration.AuditLoggingConfiguration;
 import org.qubership.atp.integration.configuration.configuration.LoggingHelpersConfiguration;
 import org.qubership.atp.integration.configuration.helpers.KafkaAdminHelper;
 import org.qubership.atp.integration.configuration.service.AuditLoggingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,7 +42,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootTest(classes = {AuditLoggingConfiguration.class, LoggingHelpersConfiguration.class})
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = {
         "atp.audit.logging.enable=true",
         "atp.audit.logging.topic.name=audit_logging_topic",
@@ -61,31 +58,31 @@ public class AuditLoggingFilterTest {
     /**
      * KafkaAdminHelper MockBean.
      */
-    @MockBean
+    @MockitoBean
     private KafkaAdminHelper kafkaAdminHelper;
 
     /**
      * AuditLoggingService MockBean.
      */
-    @MockBean
+    @MockitoBean
     private AuditLoggingService auditLoggingService;
 
     /**
      * HttpServletRequest MockBean.
      */
-    @MockBean
+    @MockitoBean
     private HttpServletRequest httpServletRequest;
 
     /**
      * HttpServletResponse MockBean.
      */
-    @MockBean
+    @MockitoBean
     private HttpServletResponse httpServletResponse;
 
     /**
      * FilterChain MockBean.
      */
-    @MockBean
+    @MockitoBean
     private FilterChain filterChain;
 
     /**
@@ -165,7 +162,7 @@ public class AuditLoggingFilterTest {
     /**
      * Before test handler.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         when(httpServletRequest.getHeader(PROJECT_ID_HEADER_NAME)).thenReturn(TEST_PROJECT_ID);
         when(httpServletRequest.getRequestURI()).thenReturn(TEST_URL);

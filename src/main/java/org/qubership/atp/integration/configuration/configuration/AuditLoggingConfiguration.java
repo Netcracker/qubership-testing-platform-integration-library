@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -33,11 +33,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import jakarta.servlet.Filter;
 
 @ConditionalOnProperty(value = "atp.audit.logging.enable", havingValue = "true")
+@Configuration
 @EnableAspectJAutoProxy
 @ComponentScan("org.qubership.atp.integration.configuration")
 @ComponentScan("org.qubership.atp.integration.configuration.*")

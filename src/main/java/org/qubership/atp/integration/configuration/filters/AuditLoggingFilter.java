@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.qubership.atp.integration.configuration.filters;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.http.HttpHeaders;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
 import org.qubership.atp.integration.configuration.service.AuditLoggingService;
 import org.slf4j.MDC;
@@ -71,7 +70,7 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
         }
         log.debug("Continue request filter chain");
         filterChain.doFilter(request, response);
-        if (isEmpty(authToken)) {
+        if (StringUtils.isEmpty(authToken)) {
             log.debug("Audit logging was skipped for the '{}' request because of empty Authorization token", url);
         } else {
             try {

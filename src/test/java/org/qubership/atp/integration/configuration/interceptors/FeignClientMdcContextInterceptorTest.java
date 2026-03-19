@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.qubership.atp.integration.configuration.interceptors;
 
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.mdc.MdcField;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 
@@ -41,7 +41,7 @@ public class FeignClientMdcContextInterceptorTest {
     /**
      * Before tests setup.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         interceptor = new FeignClientMdcContextInterceptor("projectId");
         request = new RequestTemplate();
@@ -54,7 +54,7 @@ public class FeignClientMdcContextInterceptorTest {
     public void loggingInterceptorShouldBeApplied() {
         MdcUtils.put(MdcField.PROJECT_ID.toString(), UUID.randomUUID());
         interceptor.apply(request);
-        Assert.assertTrue(request.headers().containsKey(
+        Assertions.assertTrue(request.headers().containsKey(
                 MdcUtils.convertIdNameToHeader(MdcField.PROJECT_ID.toString())));
     }
 
