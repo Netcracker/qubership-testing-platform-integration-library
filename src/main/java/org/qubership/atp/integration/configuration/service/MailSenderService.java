@@ -141,7 +141,7 @@ public class MailSenderService {
         MailResponse mailResponse = new MailResponse();
         try {
             ResponseEntity response = mailSenderFeignClient.send(mail);
-            mailResponse.setStatus(response.getStatusCodeValue());
+            mailResponse.setStatus(response.getStatusCode().value());
             mailResponse.setMessage("Mail sent successfully");
         } catch (Exception ex) {
             log.error("Failed to send mail", ex);
@@ -165,7 +165,7 @@ public class MailSenderService {
         try {
             ResponseEntity response = mailSenderFeignClient.sendWithAttachment(
                     objectMapper.writeValueAsString(mail), attachments, inlines);
-            mailResponse.setStatus(response.getStatusCodeValue());
+            mailResponse.setStatus(response.getStatusCode().value());
             mailResponse.setMessage("Mail sent successfully");
         } catch (Exception ex) {
             log.error("Failed to send mail", ex);

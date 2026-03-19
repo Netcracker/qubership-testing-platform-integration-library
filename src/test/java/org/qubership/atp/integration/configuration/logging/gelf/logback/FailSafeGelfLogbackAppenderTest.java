@@ -37,7 +37,7 @@ public class FailSafeGelfLogbackAppenderTest {
     /**
      * Logger with correct configuration.
      */
-    private static org.slf4j.Logger log = LoggerFactory.getLogger(FailSafeGelfLogbackAppenderTest.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(FailSafeGelfLogbackAppenderTest.class);
 
     /**
      * Logger name.
