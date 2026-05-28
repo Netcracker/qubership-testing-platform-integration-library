@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class MdcUtils {
 
@@ -69,7 +69,7 @@ public class MdcUtils {
      */
     public static String convertIdNameToHeader(final String idName) {
         return "X-" + Arrays.stream(idName.split("(?=\\p{Upper})"))
-                .map(org.springframework.util.StringUtils::capitalize)
+                .map(org.apache.commons.lang3.StringUtils::capitalize)
                 .collect(Collectors.joining("-"));
     }
 

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.errors.RecordTooLargeException;
 import org.qubership.atp.integration.configuration.feign.MailSenderFeignClient;
 import org.qubership.atp.integration.configuration.model.MailRequest;
@@ -29,8 +31,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.util.StringUtils;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -141,7 +141,7 @@ public class MailSenderService {
         MailResponse mailResponse = new MailResponse();
         try {
             ResponseEntity response = mailSenderFeignClient.send(mail);
-            mailResponse.setStatus(response.getStatusCodeValue());
+            mailResponse.setStatus(response.getStatusCode().value());
             mailResponse.setMessage("Mail sent successfully");
         } catch (Exception ex) {
             log.error("Failed to send mail", ex);
@@ -165,7 +165,7 @@ public class MailSenderService {
         try {
             ResponseEntity response = mailSenderFeignClient.sendWithAttachment(
                     objectMapper.writeValueAsString(mail), attachments, inlines);
-            mailResponse.setStatus(response.getStatusCodeValue());
+            mailResponse.setStatus(response.getStatusCode().value());
             mailResponse.setMessage("Mail sent successfully");
         } catch (Exception ex) {
             log.error("Failed to send mail", ex);
@@ -202,7 +202,7 @@ public class MailSenderService {
         MailResponse response = new MailResponse();
         response.setTimestamp(new Date());
         try {
-            ListenableFuture<SendResult<UUID, MailRequest>> future = kafkaTemplate.send(mailRequestTopic, mail);
+            CompletableFuture<SendResult<UUID, MailRequest>> future = kafkaTemplate.send(mailRequestTopic, mail);
             future.get();
             response.setStatus(200);
             response.setMessage("Mail request successfully sent to kafka");

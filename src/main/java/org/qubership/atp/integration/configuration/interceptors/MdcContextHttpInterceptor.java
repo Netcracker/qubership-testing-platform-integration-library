@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,20 +20,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
  * @see MDC
  */
 @Slf4j
-public class MdcContextHttpInterceptor extends HandlerInterceptorAdapter {
+public class MdcContextHttpInterceptor implements HandlerInterceptor {
 
     /**
      * Header Name for ZIPKIN_TRACE_ID values.
@@ -133,7 +131,7 @@ public class MdcContextHttpInterceptor extends HandlerInterceptorAdapter {
         String name = idName.trim();
         if (parameterMap != null) {
             String[] value = parameterMap.get(name);
-            if (!StringUtils.isEmpty(value)) {
+            if (value != null && value.length != 0) {
                 MdcUtils.put(name, String.join(",", value));
             }
         }

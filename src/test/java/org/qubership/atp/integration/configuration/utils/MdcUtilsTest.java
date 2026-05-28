@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.qubership.atp.integration.configuration.utils;
 
 import java.util.UUID;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.slf4j.MDC;
 
@@ -30,7 +30,7 @@ public class MdcUtilsTest {
     /**
      * Clear MDC before tests.
      */
-    @Before
+    @BeforeEach
     public void setup() {
         MDC.clear();
     }
@@ -38,7 +38,7 @@ public class MdcUtilsTest {
     /**
      * Clear MDC after tests.
      */
-    @After
+    @AfterEach
     public void cleanup() {
         MDC.clear();
     }
@@ -49,7 +49,7 @@ public class MdcUtilsTest {
     @Test
     public void testPutUUIDObjectSuccessful() {
         MdcUtils.put("key", UUID.randomUUID());
-        Assert.assertNotNull(MDC.get("key"));
+        Assertions.assertNotNull(MDC.get("key"));
     }
 
     /**
@@ -58,7 +58,7 @@ public class MdcUtilsTest {
     @Test
     public void testPutStringObjectSuccessful() {
         MdcUtils.put("key", UUID.randomUUID().toString());
-        Assert.assertNotNull(MDC.get("key"));
+        Assertions.assertNotNull(MDC.get("key"));
     }
 
     /**
@@ -66,8 +66,8 @@ public class MdcUtilsTest {
      */
     @Test
     public void testConvertIdNameToHeaderNameSuccessful() {
-        Assert.assertEquals("X-Execution-Request-Id", MdcUtils.convertIdNameToHeader("executionRequestId"));
-        Assert.assertEquals("X-Project-Id", MdcUtils.convertIdNameToHeader("projectId"));
+        Assertions.assertEquals("X-Execution-Request-Id", MdcUtils.convertIdNameToHeader("executionRequestId"));
+        Assertions.assertEquals("X-Project-Id", MdcUtils.convertIdNameToHeader("projectId"));
     }
 
     /**
@@ -76,7 +76,7 @@ public class MdcUtilsTest {
     @Test
     public void testPutNullUUIDObjectSuccessful() {
         MdcUtils.put("key", (UUID) null);
-        Assert.assertNull(MDC.get("key"));
+        Assertions.assertNull(MDC.get("key"));
     }
 
 }

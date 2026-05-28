@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,21 +16,20 @@
 
 package org.qubership.atp.integration.configuration.service;
 
-import static org.qubership.atp.integration.configuration.service.AuditLoggingService.PROJECT_ID_HEADER_NAME;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.qubership.atp.integration.configuration.service.AuditLoggingService.PROJECT_ID_HEADER_NAME;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.qubership.atp.integration.configuration.configuration.AuditLoggingConfiguration;
@@ -42,16 +41,14 @@ import org.qubership.atp.integration.configuration.protos.KafkaAuditLoggingMessa
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @SpringBootTest(classes = {AuditLoggingConfiguration.class, LoggingHelpersConfiguration.class})
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = {
         "atp.audit.logging.enable=true",
         "spring.application.name=" + AuditLoggingServiceTest.TEST_SERVICE,
@@ -81,13 +78,13 @@ public class AuditLoggingServiceTest {
     /**
      * KafkaProducer bean.
      */
-    @MockBean
+    @MockitoBean
     private KafkaProducer<UUID, AuditLoggingMessage> kafkaProducer;
 
     /**
      * KafkaAdminHelper bean.
      */
-    @MockBean
+    @MockitoBean
     private KafkaAdminHelper kafkaAdminHelper;
 
     /**

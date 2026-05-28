@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.atp.integration.configuration.decorators.MdcTaskDecorator;
 import org.slf4j.MDC;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -38,7 +38,7 @@ public class MdcTaskDecoratorTest {
     /**
      * Initialize executor for tests.
      */
-    @Before
+    @BeforeEach
     public void init() {
         executor = new ThreadPoolTaskExecutor();
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
@@ -53,9 +53,16 @@ public class MdcTaskDecoratorTest {
      * @throws InterruptedException in case the corresponding exception is thrown during future processing.
      */
     @Test
-    public void testMdcTaskDecoratorThreadPoolWithoutMdcDecoratorTaskMdcContextWasNotCopiedForNewThread()
+    public void testMdcTaskDecorator_ThreadPoolWithoutMdcDecoratorTask_MdcContextWasNotCopiedForNewThread()
             throws ExecutionException, InterruptedException {
-        submitAndGetFuture(); // It implicitly relies on the sequence of tests execution.
+        MDC.put("projectId", "123");
+
+        Future<?> future = executor.submit((Callable<Void>) () -> {
+            Assertions.assertNull(MDC.get("projectId"));
+            return null;
+        });
+
+        future.get();
     }
 
     /**
@@ -65,18 +72,16 @@ public class MdcTaskDecoratorTest {
      * @throws InterruptedException in case the corresponding exception is thrown during future processing.
      */
     @Test
-    public void testMdcTaskDecoratorThreadPoolWithMdcDecoratorTaskMdcContextWasCopiedForNewThread()
+    public void testMdcTaskDecorator_ThreadPoolWithMdcDecoratorTask_MdcContextWasCopiedForNewThread()
             throws ExecutionException, InterruptedException {
         executor.setTaskDecorator(new MdcTaskDecorator());
-        submitAndGetFuture();
-    }
-
-    private void submitAndGetFuture() throws ExecutionException, InterruptedException {
         MDC.put("projectId", "123");
+
         Future<?> future = executor.submit((Callable<Void>) () -> {
-            Assert.assertNull(MDC.get("projectId"));
+            Assertions.assertEquals("123", MDC.get("projectId"));
             return null;
         });
+
         future.get();
     }
 

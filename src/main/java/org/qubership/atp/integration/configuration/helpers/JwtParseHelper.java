@@ -21,10 +21,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
-import org.springframework.security.jwt.JwtHelper;
 
+import com.nimbusds.jwt.EncryptedJWT;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -176,8 +178,40 @@ public class JwtParseHelper {
                 if (splitToken.length < 2) {
                     return null;
                 }
+
+                /* Old implementation:
                 JsonParser parser = JsonParserFactory.getJsonParser();
                 return parser.parseMap(JwtHelper.decode(splitToken[1]).getClaims());
+                */
+
+                /* New implementation, replaced with below code, because:
+                    1. It converts some Longs to Dates, according to claim business sense.
+                        For example, 'exp', 'iat', 'nbf' claims became Dates (were Integers)
+                        1.1. nbf=0 became default Date 01/01/1970 00:00:00 GMT+0 (!)
+                    2. Some String claims became ArrayLists, for example 'aud'.
+
+                    Instead, below code doesn't do such conversions.
+                    So, comparing with the old result, the only difference is:
+                        - Integers became Longs - for example, 'exp', 'nbf', 'iat', 'auth_time'.
+                    This difference is due to GSON configuration in the com.nimbusds.jose.util.JSONObjectUtils:
+                        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+                    AFAIK, there is no way to configure it from outside.
+                 */
+                /*
+                JWT jwt = JWTParser.parse(splitToken[1]);
+                JWTClaimsSet claimsSet = jwt.getJWTClaimsSet();
+                // Convert claims to Map
+                return new HashMap<>(claimsSet.getClaims());
+                */
+
+                // Parse JWT w/o verifying (just as deprecated JwtHelper.decode did)
+                JWT jwt = JWTParser.parse(splitToken[1]);
+                return switch (jwt) {
+                    case PlainJWT plainJWT -> plainJWT.getPayload().toJSONObject();
+                    case SignedJWT signedJWT -> signedJWT.getPayload().toJSONObject();
+                    case EncryptedJWT encryptedJWT -> encryptedJWT.getPayload().toJSONObject();
+                    default -> null; // In fact, we never visit this place, because parse exception will be thrown in JWTParser.parse
+                };
             } catch (Exception e) {
                 log.error(PARSE_TOKEN_ERROR, e);
                 throw new IllegalStateException(PARSE_TOKEN_ERROR);

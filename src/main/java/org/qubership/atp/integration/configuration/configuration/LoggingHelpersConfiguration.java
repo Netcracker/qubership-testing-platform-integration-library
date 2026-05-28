@@ -16,8 +16,6 @@
 
 package org.qubership.atp.integration.configuration.configuration;
 
-import javax.servlet.Filter;
-
 import org.qubership.atp.integration.configuration.filters.MdcHttpFilter;
 import org.qubership.atp.integration.configuration.helpers.HttpRequestParseHelper;
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
@@ -27,6 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import jakarta.servlet.Filter;
 
 @Configuration
 public class LoggingHelpersConfiguration {

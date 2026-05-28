@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,21 +20,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.qubership.atp.integration.configuration.feign.MailSenderFeignClient;
 import org.qubership.atp.integration.configuration.model.MailRequest;
 import org.qubership.atp.integration.configuration.model.MailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,19 +40,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class MailSenderServiceTest {
 
     /**
      * MailSenderFeignClient bean.
      */
-    @MockBean
+    @MockitoBean
     private MailSenderFeignClient mailSenderFeignClient;
 
     /**
      * KafkaTemplate bean.
      */
-    @MockBean
+    @MockitoBean
     private KafkaTemplate<UUID, MailRequest> kafkaTemplate;
 
     /**
@@ -72,7 +69,7 @@ public class MailSenderServiceTest {
         request.setService("test");
         Mockito.when(mailSenderFeignClient.send(request)).thenReturn(new ResponseEntity(HttpStatus.OK));
         MailResponse response = mailSenderService.send(request);
-        Assert.assertEquals(200, response.getStatus());
+        Assertions.assertEquals(200, response.getStatus());
         Mockito.verify(mailSenderFeignClient).send(request);
 
         MailRequest otherRequest = new MailRequest();
@@ -83,7 +80,7 @@ public class MailSenderServiceTest {
         Mockito.doThrow(new RuntimeException("{\"status\":500, \"message\":\"some error\"}"))
                 .when(mailSenderFeignClient).send(otherRequest);
         response = mailSenderService.send(request);
-        Assert.assertEquals(expectedResponse, response);
+        Assertions.assertEquals(expectedResponse, response);
 
         ReflectionTestUtils.setField(mailSenderService, "kafkaTemplate", kafkaTemplate);
         mailSenderService.send(request);

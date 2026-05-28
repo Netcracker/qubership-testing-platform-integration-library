@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,18 +19,17 @@ package org.qubership.atp.integration.configuration.filters;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.HttpHeaders;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.qubership.atp.integration.configuration.helpers.JwtParseHelper;
 import org.qubership.atp.integration.configuration.service.AuditLoggingService;
 import org.slf4j.MDC;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,6 +61,7 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
         log.debug("Intercept request for audit logging");
+
         final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String url = request.getRequestURI();
         Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
@@ -70,7 +70,7 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
         }
         log.debug("Continue request filter chain");
         filterChain.doFilter(request, response);
-        if (!StringUtils.hasLength(authToken)) {
+        if (StringUtils.isEmpty(authToken)) {
             log.debug("Audit logging was skipped for the '{}' request because of empty Authorization token", url);
         } else {
             try {
